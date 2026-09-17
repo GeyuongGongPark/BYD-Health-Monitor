@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy – BYD Health Monitor</title>
+  <meta name="description" content="Privacy Policy for the BYD Health Monitor app." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0e0e10; --surface2: #1a1a1e;
+      --border: rgba(255,255,255,.08); --text: #f5f5f7; --text2: #98989f;
+      --blue: #1a8cff; --green: #00e676; --orange: #ff8c00; --red: #ff3b3b;
+      --nav-bg: rgba(0,0,0,.75);
+    }
+    [data-theme="light"] {
+      --bg: #f5f5f7; --surface: #ffffff; --surface2: #e8e8ed;
+      --border: rgba(0,0,0,.1); --text: #1d1d1f; --text2: #6e6e73;
+      --nav-bg: rgba(245,245,247,.8);
+    }
+    @media (prefers-color-scheme: light) {
+      [data-theme="system"] {
+        --bg: #f5f5f7; --surface: #ffffff; --surface2: #e8e8ed;
+        --border: rgba(0,0,0,.1); --text: #1d1d1f; --text2: #6e6e73;
+        --nav-bg: rgba(245,245,247,.8);
+      }
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .theme-toggle { display: flex; gap: 2px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+    .theme-btn { width: 28px; height: 28px; border-radius: 7px; border: none; background: transparent; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background .15s; color: var(--text2); }
+    .theme-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+    .nav-logo { font-size: 15px; font-weight: 600; letter-spacing: -.3px; }
+    .nav-logo span { color: var(--blue); }
+    .nav-back { color: var(--blue); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 4px; }
+    .nav-back:hover { opacity: .8; }
+
+    /* CONTENT */
+    .container { max-width: 760px; margin: 0 auto; padding: 96px 24px 80px; }
+    .page-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(26,140,255,.12); border: 1px solid rgba(26,140,255,.3); color: var(--blue); font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 100px; margin-bottom: 20px; }
+    h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -1px; margin-bottom: 8px; }
+    .updated { font-size: 13px; color: var(--text2); margin-bottom: 48px; }
+
+    /* SECTION */
+    .section { margin-bottom: 48px; }
+    .section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .section p { font-size: 15px; color: var(--text2); line-height: 1.75; margin-bottom: 12px; }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .section ul li { font-size: 15px; color: var(--text2); display: flex; gap: 10px; align-items: flex-start; line-height: 1.6; }
+    .section ul li::before { content: '·'; color: var(--blue); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    /* INFO BOX */
+    .info-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; }
+    .info-box-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+    .info-box-value { font-size: 15px; font-weight: 500; }
+
+    /* HIGHLIGHT */
+    .highlight { background: rgba(0,230,118,.06); border: 1px solid rgba(0,230,118,.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+    .highlight p { color: var(--text); margin-bottom: 0; }
+
+    /* TABLE */
+    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 14px; }
+    .data-table th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); }
+    .data-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; line-height: 1.5; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--text); font-weight: 500; white-space: nowrap; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+    .badge-local { background: rgba(0,230,118,.12); color: var(--green); border: 1px solid rgba(0,230,118,.2); }
+    .badge-none { background: rgba(150,150,150,.1); color: var(--text2); border: 1px solid var(--border); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 13px; }
+    footer a { color: var(--text2); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="./index.html">← BYD Health Monitor</a>
+  <a href="../privacy.html" style="color:var(--blue);font-size:14px;font-weight:600;text-decoration:none">KO</a>
+  <div class="theme-toggle">
+    <button class="theme-btn" id="theme-light" onclick="setTheme('light')" title="Light">☀️</button>
+    <button class="theme-btn" id="theme-system" onclick="setTheme('system')" title="System">💻</button>
+    <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')" title="Dark">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-badge">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: September 17, 2026</p>
+
+  <!-- 1 -->
+  <div class="section">
+    <h2>1. Overview</h2>
+    <p>BYD Health Monitor (the "App") is an open-source vehicle health monitoring app that runs on the BYD DiLink in-car display.</p>
+    <div class="highlight">
+      <p>This App does not collect any personally identifiable information. All data remains on the vehicle device and is never transmitted to external servers.</p>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section">
+    <h2>2. Data We Process</h2>
+    <p>The following table describes the data the App handles and where it is stored.</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data Type</th>
+          <th>Description</th>
+          <th>Storage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Fault Codes</td>
+          <td>Real-time status of 23 fault codes via BYD HAL API.</td>
+          <td><span class="badge badge-none">In-memory only</span></td>
+        </tr>
+        <tr>
+          <td>Tire Status</td>
+          <td>Pressure (kPa), temperature state, and air leak detection for all 4 tires.</td>
+          <td><span class="badge badge-none">In-memory only</span></td>
+        </tr>
+        <tr>
+          <td>Battery &amp; Range</td>
+          <td>Battery percentage, estimated electric driving range, total mileage.</td>
+          <td><span class="badge badge-none">In-memory only</span></td>
+        </tr>
+        <tr>
+          <td>Maintenance History</td>
+          <td>Replacement records entered manually by the user: date, mileage, and optional notes.</td>
+          <td><span class="badge badge-local">Local device DB</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Vehicle data is queried in real time during app use and discarded when the session ends. Only user-entered maintenance history is persisted to an on-device Room database.</p>
+  </div>
+
+  <!-- 3 -->
+  <div class="section">
+    <h2>3. Data We Do Not Collect</h2>
+    <ul>
+      <li>Personal identifiers such as name, email address, or phone number</li>
+      <li>Location data (GPS or network-based)</li>
+      <li>Usage logs or analytics events</li>
+      <li>Advertising identifiers (ADID, IDFA, etc.)</li>
+      <li>Camera or microphone data</li>
+      <li>Contacts, calendar, photos, or other personal device data</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <div class="section">
+    <h2>4. Data Storage &amp; Security</h2>
+    <p>Maintenance history is stored exclusively in an SQLite database (Room) on the DiLink device itself. It is never synced to external servers or cloud storage.</p>
+    <ul>
+      <li>Uninstalling the App permanently deletes all locally stored data.</li>
+      <li>No third-party SDKs, ad networks, or analytics tools are included.</li>
+      <li>The App functions fully without an internet connection.</li>
+    </ul>
+  </div>
+
+  <!-- 5 -->
+  <div class="section">
+    <h2>5. App Permissions</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Permission</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>POST_NOTIFICATIONS</td>
+          <td>Displays a status bar notification when a CRITICAL fault code is detected. You can disable this at any time in system settings.</td>
+        </tr>
+        <tr>
+          <td>INTERNET</td>
+          <td>Reserved for Phase 7 (smartphone integration). Not used in the current version.</td>
+        </tr>
+        <tr>
+          <td>FOREGROUND_SERVICE</td>
+          <td>For background vehicle monitoring via a foreground service (planned).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6 -->
+  <div class="section">
+    <h2>6. Third-Party Sharing</h2>
+    <div class="highlight">
+      <p>We do not sell, share, or transmit any data to third parties.</p>
+    </div>
+    <p>The App uses the following open-source libraries. None of them collect or transmit user data.</p>
+    <ul>
+      <li>Jetpack Compose, Hilt, Room — Google Android Jetpack (Apache 2.0)</li>
+      <li>Kotlin Coroutines — JetBrains (Apache 2.0)</li>
+    </ul>
+  </div>
+
+  <!-- 7 -->
+  <div class="section">
+    <h2>7. Children's Privacy</h2>
+    <p>This App is intended for vehicle operators. We do not knowingly collect any data from children under the age of 13.</p>
+  </div>
+
+  <!-- 8 -->
+  <div class="section">
+    <h2>8. Changes to This Policy</h2>
+    <p>This Privacy Policy may be updated as the App evolves — particularly when Phase 7 (smartphone integration) is introduced. Any changes will be reflected on this page with an updated date and announced via the GitHub repository.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="section">
+    <h2>9. Contact</h2>
+    <div class="info-box">
+      <div class="info-box-title">Developer</div>
+      <div class="info-box-value">GeyuongGongPark</div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">GitHub</div>
+      <div class="info-box-value"><a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" style="color:var(--blue);text-decoration:none">github.com/GeyuongGongPark/BYD-Health-Monitor</a></div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">Inquiries</div>
+      <div class="info-box-value">Please open an issue on <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/issues" style="color:var(--blue);text-decoration:none">GitHub Issues</a>.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="./index.html">BYD Health Monitor</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" target="_blank">GitHub</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/issues" target="_blank">Contact</a>
+  </div>
+  <p>BYD Health Monitor is an open-source project. Not affiliated with BYD.</p>
+</footer>
+
+<script>
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('bhm-theme', t);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('theme-' + t).classList.add('active');
+  }
+  setTheme(localStorage.getItem('bhm-theme') || 'system');
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose가 UI를 완전히 제어하므로 최소한의 Activity 테마만 선언 -->
+    <style name="Theme.BYDHealthMonitor" parent="android:Theme.Black.NoTitleBar.Fullscreen" />
+</resources>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BYD Health Monitor – 차량 건강 모니터링 앱</title>
+  <meta name="description" content="고장 코드 23종, 타이어 상태, 소모품 교체 주기를 한눈에 확인하는 BYD DiLink 전용 차량 건강 앱." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0e0e10; --surface2: #1a1a1e;
+      --border: rgba(255,255,255,.08); --text: #f5f5f7; --text2: #98989f;
+      --blue: #1a8cff; --green: #00e676; --orange: #ff8c00; --red: #ff3b3b; --yellow: #ffd600;
+      --radius: 18px;
+      --nav-bg: rgba(0,0,0,.75);
+    }
+    [data-theme="light"] {
+      --bg: #f5f5f7; --surface: #ffffff; --surface2: #e8e8ed;
+      --border: rgba(0,0,0,.1); --text: #1d1d1f; --text2: #6e6e73;
+      --nav-bg: rgba(245,245,247,.8);
+    }
+    @media (prefers-color-scheme: light) {
+      [data-theme="system"] {
+        --bg: #f5f5f7; --surface: #ffffff; --surface2: #e8e8ed;
+        --border: rgba(0,0,0,.1); --text: #1d1d1f; --text2: #6e6e73;
+        --nav-bg: rgba(245,245,247,.8);
+      }
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .theme-toggle { display: flex; gap: 2px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+    .theme-btn { width: 28px; height: 28px; border-radius: 7px; border: none; background: transparent; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background .15s; color: var(--text2); }
+    .theme-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+    .nav-logo { font-size: 15px; font-weight: 600; letter-spacing: -.3px; }
+    .nav-logo span { color: var(--blue); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 600px) { .nav-links { display: none; } }
+
+    /* HERO */
+    .hero { min-height: 100svh; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 80px 60px 60px; max-width: 1200px; margin: 0 auto; }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; justify-items: center; } }
+    .hero-info { display: flex; flex-direction: column; justify-content: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(26,140,255,.12); border: 1px solid rgba(26,140,255,.3); color: var(--blue); font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 100px; margin-bottom: 24px; width: fit-content; }
+    .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px; }
+    .hero h1 em { font-style: normal; color: var(--blue); }
+    .hero p { font-size: 17px; color: var(--text2); margin-bottom: 32px; max-width: 440px; }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all .2s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-outline { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--surface); border-color: rgba(255,255,255,.2); }
+    .hero-models-label { font-size: 12px; color: var(--text2); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .4px; }
+    .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-badges span { background: var(--surface2); border: 1px solid var(--border); padding: 4px 12px; border-radius: 100px; font-size: 12px; color: var(--text2); }
+
+    /* DISPLAY MOCKUP */
+    .display-wrap { display: flex; justify-content: center; align-items: center; }
+    .display-frame {
+      width: 560px; height: 320px; border-radius: 20px;
+      background: #0a0a0c; border: 2px solid #2a2a2a;
+      box-shadow: 0 0 0 1px #111, 0 40px 80px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.05);
+      overflow: hidden; position: relative; flex-shrink: 0;
+      padding: 16px;
+      display: flex; gap: 16px;
+    }
+    @media (max-width: 900px) { .display-frame { width: 100%; max-width: 480px; height: auto; min-height: 260px; } }
+
+    /* GAUGE */
+    .gauge-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex: 0 0 140px; }
+    .gauge-svg { width: 120px; height: 120px; }
+    .gauge-score { font-size: 36px; font-weight: 700; color: var(--green); line-height: 1; }
+    .gauge-label { font-size: 10px; color: var(--text2); }
+    .gauge-sub { font-size: 9px; color: var(--text2); text-align: center; }
+
+    /* CARDS COL */
+    .cards-col { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+    .mock-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+    .mock-card-icon { font-size: 16px; flex-shrink: 0; }
+    .mock-card-body { flex: 1; }
+    .mock-card-title { font-size: 11px; font-weight: 600; color: var(--text); }
+    .mock-card-sub { font-size: 10px; }
+    .mock-card-arrow { font-size: 11px; color: rgba(255,255,255,.2); }
+
+    /* NAV BAR (mock) */
+    .mock-nav { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(20,30,45,.95); border-top: 1px solid rgba(255,255,255,.06); display: flex; padding: 6px 0; }
+    .mock-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 8px; color: var(--text2); }
+    .mock-nav-item.active { color: var(--blue); }
+    .mock-nav-icon { font-size: 14px; }
+
+    /* SECTION */
+    .full-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: 13px; font-weight: 600; color: var(--blue); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 12px; }
+    .section-title { font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+    .section-desc { font-size: 17px; color: var(--text2); max-width: 520px; margin-bottom: 48px; }
+
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; transition: border-color .2s, transform .2s; }
+    .feature-card:hover { border-color: rgba(255,255,255,.18); transform: translateY(-2px); }
+    .feature-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    /* SCORE */
+    .score-section { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    @media (max-width: 700px) { .score-section { grid-template-columns: 1fr; } }
+    .score-formula { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+    .score-formula h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+    .formula-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .formula-item:last-child { border-bottom: none; }
+    .formula-item .fi-label { font-size: 14px; color: var(--text2); }
+    .formula-item .fi-val { font-size: 14px; font-weight: 600; }
+
+    /* REQUIREMENTS */
+    .req-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .req-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .req-item .req-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+    .req-item .req-value { font-size: 15px; font-weight: 600; }
+
+    /* INSTALL */
+    .install-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+    .install-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .install-card .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 28px; }
+    .install-steps { display: flex; flex-direction: column; gap: 20px; }
+    .install-step { display: flex; gap: 16px; align-items: flex-start; }
+    .install-step-num { min-width: 28px; height: 28px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text2); display: flex; align-items: center; justify-content: center; }
+    .install-step-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .install-step-body p { font-size: 14px; color: var(--text2); }
+    .install-step-body a { color: var(--blue); text-decoration: none; }
+    .install-step-body a:hover { text-decoration: underline; }
+    code { background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 6px; font-size: 13px; font-family: "SF Mono", monospace; }
+    .code-block { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-top: 8px; font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; color: #a8d8a8; overflow-x: auto; white-space: pre; }
+    .note { display: flex; gap: 10px; align-items: flex-start; background: rgba(255,159,10,.06); border: 1px solid rgba(255,159,10,.2); border-radius: 10px; padding: 14px 16px; margin-top: 24px; }
+    .note-icon { font-size: 16px; flex-shrink: 0; line-height: 1.4; }
+    .note p { font-size: 13px; color: var(--text2); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 13px; }
+    footer a { color: var(--text2); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">BYD <span>Health Monitor</span></div>
+  <div class="nav-links">
+    <a href="#features">기능</a>
+    <a href="#score">건강 점수</a>
+    <a href="#install">설치</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" target="_blank">GitHub</a>
+    <a href="./en/index.html" style="color:var(--blue);font-weight:600">EN</a>
+  </div>
+  <div class="theme-toggle">
+    <button class="theme-btn" id="theme-light" onclick="setTheme('light')" title="라이트">☀️</button>
+    <button class="theme-btn" id="theme-system" onclick="setTheme('system')" title="시스템">💻</button>
+    <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')" title="다크">🌙</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+
+  <!-- DISPLAY MOCKUP -->
+  <div class="display-wrap">
+    <div class="display-frame">
+      <!-- Gauge -->
+      <div class="gauge-col">
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <!-- Track -->
+          <path d="M 20 95 A 50 50 0 1 1 100 95" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="10" stroke-linecap="round"/>
+          <!-- Arc -->
+          <path d="M 20 95 A 50 50 0 1 1 100 95" fill="none" stroke="#00e676" stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="220" stroke-dashoffset="44"/>
+          <!-- Text -->
+          <text x="60" y="68" text-anchor="middle" fill="#00e676" font-size="24" font-weight="700" font-family="-apple-system,sans-serif">82</text>
+          <text x="60" y="82" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="9" font-family="-apple-system,sans-serif">/ 100</text>
+        </svg>
+        <div class="gauge-label">차량 건강 점수</div>
+        <div class="gauge-sub">배터리 80% · 주행가능 320km</div>
+      </div>
+
+      <!-- Section Cards -->
+      <div class="cards-col">
+        <div class="mock-card">
+          <div class="mock-card-icon">⚠️</div>
+          <div class="mock-card-body">
+            <div class="mock-card-title">고장 현황</div>
+            <div class="mock-card-sub" style="color:var(--green)">모든 시스템 정상</div>
+          </div>
+          <div class="mock-card-arrow">›</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-icon">🔵</div>
+          <div class="mock-card-body">
+            <div class="mock-card-title">타이어</div>
+            <div class="mock-card-sub" style="color:var(--green)">정상 · FL 240kPa</div>
+          </div>
+          <div class="mock-card-arrow">›</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-icon">🔧</div>
+          <div class="mock-card-body">
+            <div class="mock-card-title">소모품</div>
+            <div class="mock-card-sub" style="color:var(--orange)">교체 임박 1건</div>
+          </div>
+          <div class="mock-card-arrow">›</div>
+        </div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="mock-nav">
+        <div class="mock-nav-item active"><div class="mock-nav-icon">🏠</div>대시보드</div>
+        <div class="mock-nav-item"><div class="mock-nav-icon">⚠️</div>고장</div>
+        <div class="mock-nav-item"><div class="mock-nav-icon">🔵</div>타이어</div>
+        <div class="mock-nav-item"><div class="mock-nav-icon">🔧</div>정비</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT INFO -->
+  <div class="hero-info">
+    <div class="hero-badge">🚗 BYD DiLink 전용 · Android</div>
+    <h1>차량 상태를<br><em>한눈에 확인</em></h1>
+    <p>고장 코드 23종을 한국어로 번역하고, 타이어 공기압과 소모품 교체 주기까지 차량 내장 디스플레이에서 바로 확인합니다.</p>
+    <div class="hero-ctas">
+      <a href="#install" class="btn btn-primary">설치하기</a>
+      <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" target="_blank" class="btn btn-outline">GitHub →</a>
+    </div>
+
+    <div class="hero-models-label">지원 모델</div>
+    <div class="hero-badges">
+      <span>Atto 3</span><span>Seal</span><span>Sealion 6</span><span>Sealion 7</span><span>Dolphin</span>
+    </div>
+  </div>
+</div>
+
+<hr class="full-divider" />
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">기능</div>
+  <h2 class="section-title">차량 건강을 한 곳에서</h2>
+  <p class="section-desc">BYD HAL OpenAPI를 직접 연동해 실시간 차량 데이터를 가져옵니다.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,59,59,.12)">⚠️</div>
+      <h3>고장 코드 번역</h3>
+      <p>23종 고장 코드를 한국어 설명과 권장 조치로 변환. CRITICAL · WARNING · INFO 긴급도 분류.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(26,140,255,.12)">🔵</div>
+      <h3>타이어 대시보드</h3>
+      <p>4개 타이어 압력(kPa), 온도 상태, 공기 누출 여부, TPMS 시스템 상태를 차량 조감도 위에 표시.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,230,118,.12)">🔧</div>
+      <h3>소모품 관리</h3>
+      <p>엔진오일 · 브레이크액 · 냉각수 · 타이어 · 에어컨필터 · 브레이크패드 교체 주기 추적. 교체 이력 기록.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,214,0,.12)">📊</div>
+      <h3>건강 점수 게이지</h3>
+      <p>고장 심각도와 소모품 상태를 종합해 0~100점으로 표시. 카운트업 애니메이션 포함.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,140,0,.12)">🔔</div>
+      <h3>CRITICAL 알림</h3>
+      <p>긴급 고장 코드 감지 시 상태바 알림 자동 발송. 중복 발송 방지 로직 내장.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(100,210,255,.12)">📈</div>
+      <h3>배터리 · 주행거리</h3>
+      <p>배터리 잔량(%), 전기 주행 가능 거리(km)를 대시보드에서 즉시 확인.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(26,140,255,.12)">🌙</div>
+      <h3>다크 테마 전용</h3>
+      <p>야간 주행과 차량 내부 조명 환경에 최적화된 BYD 다크 팔레트. 눈부심 없는 UI.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,230,118,.12)">🔌</div>
+      <h3>Mock 모드</h3>
+      <p>실기기 없이도 전체 UI 동작 확인 가능. BYD OpenAPI 미지원 기기에서 자동으로 Mock 데이터로 전환.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="full-divider" />
+
+<!-- SCORE -->
+<section id="score">
+  <div class="section-label">건강 점수</div>
+  <h2 class="section-title">점수가 낮으면 조치하세요</h2>
+  <p class="section-desc">여러 지표를 종합해 차량 상태를 단 하나의 숫자로 표현합니다.</p>
+  <div class="score-section">
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px">
+        <div style="font-size:80px;font-weight:700;color:var(--green);line-height:1;letter-spacing:-3px">82</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:4px">양호</div>
+          <div style="font-size:13px;color:var(--text2)">소모품 교체 임박 1건</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>80점 이상 — 양호</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block"></span>50~79점 — 주의</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block"></span>50점 미만 — 위험</div>
+      </div>
+    </div>
+    <div class="score-formula">
+      <h3>점수 산정 공식</h3>
+      <div class="formula-item">
+        <span class="fi-label">시작 점수</span>
+        <span class="fi-val">100점</span>
+      </div>
+      <div class="formula-item">
+        <span class="fi-label" style="color:var(--red)">긴급 고장 (CRITICAL) 1건당</span>
+        <span class="fi-val" style="color:var(--red)">−40점</span>
+      </div>
+      <div class="formula-item">
+        <span class="fi-label" style="color:var(--orange)">주의 고장 (WARNING) 1건당</span>
+        <span class="fi-val" style="color:var(--orange)">−15점</span>
+      </div>
+      <div class="formula-item">
+        <span class="fi-label" style="color:var(--orange)">소모품 교체 초과 1건당</span>
+        <span class="fi-val" style="color:var(--orange)">−10점</span>
+      </div>
+      <div class="formula-item">
+        <span class="fi-label">최솟값</span>
+        <span class="fi-val">0점</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="full-divider" />
+
+<!-- REQUIREMENTS -->
+<section>
+  <div class="section-label">요구 사항</div>
+  <h2 class="section-title">설치 전 확인하세요</h2>
+  <p class="section-desc" style="margin-bottom:32px">BYD DiLink 탑재 차량과 Android 개발 환경이 필요합니다.</p>
+  <div class="req-grid">
+    <div class="req-item"><div class="req-label">차량</div><div class="req-value">BYD DiLink 탑재 모델</div></div>
+    <div class="req-item"><div class="req-label">OS</div><div class="req-value">Android API 23 이상</div></div>
+    <div class="req-item"><div class="req-label">화면</div><div class="req-value">가로 (Landscape) 고정</div></div>
+    <div class="req-item"><div class="req-label">빌드 도구</div><div class="req-value">Android Studio / Gradle</div></div>
+    <div class="req-item"><div class="req-label">BYD OpenAPI</div><div class="req-value">실기기 ADB 추출 또는 Mock 모드</div></div>
+    <div class="req-item"><div class="req-label">권한</div><div class="req-value">알림 (CRITICAL 고장 알림)</div></div>
+  </div>
+</section>
+
+<hr class="full-divider" />
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="section-label">설치</div>
+  <h2 class="section-title">직접 빌드해서 설치하세요</h2>
+  <p class="section-desc">Android Studio로 빌드 후 ADB로 차량 디스플레이에 설치합니다.</p>
+  <div class="install-card">
+    <h3>Android Studio로 빌드 및 설치</h3>
+    <p class="subtitle">BYD DiLink 차량에 USB로 연결하거나 무선 ADB로 설치합니다.</p>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-body">
+          <h4>저장소 클론</h4>
+          <div class="code-block">git clone https://github.com/GeyuongGongPark/BYD-Health-Monitor.git
+cd BYD-Health-Monitor</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-body">
+          <h4>Android Studio에서 열기</h4>
+          <p><code>File → Open</code>에서 클론한 폴더를 선택합니다. Gradle 동기화가 자동으로 시작됩니다.</p>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-body">
+          <h4>(선택) BYD OpenAPI 연결</h4>
+          <p>실기기에서 ADB로 <code>bydauto-openapi.jar</code>를 추출해 <code>android/libs/</code>에 배치하면 실제 차량 데이터를 사용합니다. 생략 시 Mock 데이터로 동작합니다.</p>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">4</div>
+        <div class="install-step-body">
+          <h4>DiLink에 APK 설치</h4>
+          <p>차량 USB 포트로 연결 후 Android Studio Run 버튼 또는:</p>
+          <div class="code-block">./gradlew :android:installDebug</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <p>BYD OpenAPI jar 없이도 Mock 모드로 전체 UI 동작 확인이 가능합니다. 실기기 연결 전 에뮬레이터나 일반 Android 기기에서 먼저 테스트해보세요.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="full-divider" />
+
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" target="_blank">GitHub</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/issues" target="_blank">버그 신고</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/releases" target="_blank">릴리즈</a>
+    <a href="./privacy.html">개인정보 처리방침</a>
+  </div>
+  <p>BYD Health Monitor는 오픈 소스 프로젝트입니다. BYD와 공식적인 관련이 없습니다.</p>
+</footer>
+
+<script>
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('bhm-theme', t);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('theme-' + t).classList.add('active');
+  }
+  setTheme(localStorage.getItem('bhm-theme') || 'system');
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개인정보 처리방침 – BYD Health Monitor</title>
+  <meta name="description" content="BYD Health Monitor 앱의 개인정보 처리방침입니다." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0e0e10; --surface2: #1a1a1e;
+      --border: rgba(255,255,255,.08); --text: #f5f5f7; --text2: #98989f;
+      --blue: #1a8cff; --green: #00e676; --orange: #ff8c00; --red: #ff3b3b;
+      --nav-bg: rgba(0,0,0,.75);
+    }
+    [data-theme="light"] {
+      --bg: #f5f5f7; --surface: #ffffff; --surface2: #e8e8ed;
+      --border: rgba(0,0,0,.1); --text: #1d1d1f; --text2: #6e6e73;
+      --nav-bg: rgba(245,245,247,.8);
+    }
+    @media (prefers-color-scheme: light) {
+      [data-theme="system"] {
+        --bg: #f5f5f7; --surface: #ffffff; --surface2: #e8e8ed;
+        --border: rgba(0,0,0,.1); --text: #1d1d1f; --text2: #6e6e73;
+        --nav-bg: rgba(245,245,247,.8);
+      }
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .theme-toggle { display: flex; gap: 2px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+    .theme-btn { width: 28px; height: 28px; border-radius: 7px; border: none; background: transparent; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background .15s; color: var(--text2); }
+    .theme-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+    .nav-logo { font-size: 15px; font-weight: 600; letter-spacing: -.3px; }
+    .nav-logo span { color: var(--blue); }
+    .nav-back { color: var(--blue); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 4px; }
+    .nav-back:hover { opacity: .8; }
+
+    /* CONTENT */
+    .container { max-width: 760px; margin: 0 auto; padding: 96px 24px 80px; }
+    .page-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(26,140,255,.12); border: 1px solid rgba(26,140,255,.3); color: var(--blue); font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 100px; margin-bottom: 20px; }
+    h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -1px; margin-bottom: 8px; }
+    .updated { font-size: 13px; color: var(--text2); margin-bottom: 48px; }
+
+    /* SECTION */
+    .section { margin-bottom: 48px; }
+    .section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .section p { font-size: 15px; color: var(--text2); line-height: 1.75; margin-bottom: 12px; }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .section ul li { font-size: 15px; color: var(--text2); display: flex; gap: 10px; align-items: flex-start; line-height: 1.6; }
+    .section ul li::before { content: '·'; color: var(--blue); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    /* INFO BOX */
+    .info-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; }
+    .info-box-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+    .info-box-value { font-size: 15px; font-weight: 500; }
+
+    /* HIGHLIGHT */
+    .highlight { background: rgba(0,230,118,.06); border: 1px solid rgba(0,230,118,.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+    .highlight p { color: var(--text); margin-bottom: 0; }
+
+    /* TABLE */
+    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 14px; }
+    .data-table th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); }
+    .data-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; line-height: 1.5; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--text); font-weight: 500; white-space: nowrap; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+    .badge-local { background: rgba(0,230,118,.12); color: var(--green); border: 1px solid rgba(0,230,118,.2); }
+    .badge-none { background: rgba(150,150,150,.1); color: var(--text2); border: 1px solid var(--border); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 13px; }
+    footer a { color: var(--text2); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="./index.html">← BYD Health Monitor</a>
+  <a href="./en/privacy.html" style="color:var(--blue);font-size:14px;font-weight:600;text-decoration:none">EN</a>
+  <div class="theme-toggle">
+    <button class="theme-btn" id="theme-light" onclick="setTheme('light')" title="라이트">☀️</button>
+    <button class="theme-btn" id="theme-system" onclick="setTheme('system')" title="시스템">💻</button>
+    <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')" title="다크">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-badge">법적 고지</div>
+  <h1>개인정보 처리방침</h1>
+  <p class="updated">최종 수정일: 2026년 9월 17일</p>
+
+  <!-- 1 -->
+  <div class="section">
+    <h2>1. 개요</h2>
+    <p>BYD Health Monitor(이하 "앱")는 BYD 차량 내장 디스플레이(DiLink)에서 실행되는 오픈 소스 차량 건강 모니터링 앱입니다.</p>
+    <div class="highlight">
+      <p>본 앱은 사용자의 개인 식별 정보를 수집하지 않습니다. 모든 데이터는 차량 기기 내에 저장되며 외부 서버로 전송되지 않습니다.</p>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section">
+    <h2>2. 수집하는 정보</h2>
+    <p>앱이 처리하는 데이터와 저장 위치는 아래와 같습니다.</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>데이터 항목</th>
+          <th>내용</th>
+          <th>저장 위치</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>차량 고장 코드</td>
+          <td>BYD HAL API에서 실시간 조회. 23종 고장 코드 활성 여부.</td>
+          <td><span class="badge badge-none">메모리(비저장)</span></td>
+        </tr>
+        <tr>
+          <td>타이어 상태</td>
+          <td>4개 타이어 압력(kPa), 온도 상태, 공기 누출 감지.</td>
+          <td><span class="badge badge-none">메모리(비저장)</span></td>
+        </tr>
+        <tr>
+          <td>배터리 · 주행거리</td>
+          <td>배터리 잔량(%), 전기 주행 가능 거리(km), 총 주행거리.</td>
+          <td><span class="badge badge-none">메모리(비저장)</span></td>
+        </tr>
+        <tr>
+          <td>소모품 교체 이력</td>
+          <td>사용자가 직접 입력한 교체 일자, 교체 시 주행거리, 메모.</td>
+          <td><span class="badge badge-local">기기 내 로컬 DB</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>차량 데이터는 앱 실행 중 실시간으로 조회되며, 세션이 종료되면 메모리에서 삭제됩니다. 소모품 교체 이력만 사용자 요청에 의해 기기 내 Room 데이터베이스에 저장됩니다.</p>
+  </div>
+
+  <!-- 3 -->
+  <div class="section">
+    <h2>3. 수집하지 않는 정보</h2>
+    <ul>
+      <li>이름, 이메일 주소, 전화번호 등 개인 식별 정보</li>
+      <li>위치 정보 (GPS, 네트워크 위치)</li>
+      <li>사용 로그, 이벤트 분석 데이터 (Analytics)</li>
+      <li>광고 식별자 (ADID, IDFA 등)</li>
+      <li>카메라, 마이크 데이터</li>
+      <li>연락처, 캘린더, 사진 등 기기 개인 데이터</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <div class="section">
+    <h2>4. 데이터 저장 및 보안</h2>
+    <p>소모품 교체 이력은 차량 디스플레이(DiLink) 기기 내 SQLite 데이터베이스(Room)에만 저장됩니다. 외부 서버, 클라우드 스토리지로 전송되거나 동기화되지 않습니다.</p>
+    <ul>
+      <li>앱 삭제 시 기기 내 저장 데이터가 함께 삭제됩니다.</li>
+      <li>타사 SDK, 광고 네트워크, 분석 도구가 포함되어 있지 않습니다.</li>
+      <li>인터넷 연결이 없어도 앱의 모든 기능이 동작합니다.</li>
+    </ul>
+  </div>
+
+  <!-- 5 -->
+  <div class="section">
+    <h2>5. 앱 권한</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>권한</th>
+          <th>사용 목적</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>POST_NOTIFICATIONS</td>
+          <td>CRITICAL 긴급 고장 코드 감지 시 상태바 알림 표시. 알림을 원하지 않으면 시스템 설정에서 비활성화할 수 있습니다.</td>
+        </tr>
+        <tr>
+          <td>INTERNET</td>
+          <td>Phase 7(스마트폰 연동) 구현 시 사용 예정. 현재 버전에서는 사용하지 않습니다.</td>
+        </tr>
+        <tr>
+          <td>FOREGROUND_SERVICE</td>
+          <td>백그라운드 차량 데이터 모니터링을 위한 포그라운드 서비스 (구현 예정).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6 -->
+  <div class="section">
+    <h2>6. 제3자 공유</h2>
+    <div class="highlight">
+      <p>본 앱은 수집된 어떠한 데이터도 제3자에게 판매, 공유, 전송하지 않습니다.</p>
+    </div>
+    <p>타사 라이브러리는 아래와 같이 사용됩니다. 해당 라이브러리들은 사용자 데이터를 수집하거나 전송하지 않습니다.</p>
+    <ul>
+      <li>Jetpack Compose, Hilt, Room — Google Android Jetpack (Apache 2.0)</li>
+      <li>Kotlin Coroutines — JetBrains (Apache 2.0)</li>
+    </ul>
+  </div>
+
+  <!-- 7 -->
+  <div class="section">
+    <h2>7. 어린이 개인정보 보호</h2>
+    <p>본 앱은 차량 운전자를 대상으로 합니다. 13세 미만 어린이를 대상으로 데이터를 수집하지 않습니다.</p>
+  </div>
+
+  <!-- 8 -->
+  <div class="section">
+    <h2>8. 방침 변경</h2>
+    <p>본 개인정보 처리방침은 앱 업데이트 또는 기능 추가(특히 Phase 7 스마트폰 연동 기능)에 따라 변경될 수 있습니다. 변경 시 이 페이지에 수정일을 표기하고 GitHub 저장소를 통해 공지합니다.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="section">
+    <h2>9. 문의</h2>
+    <div class="info-box">
+      <div class="info-box-title">개발자</div>
+      <div class="info-box-value">GeyuongGongPark</div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">GitHub</div>
+      <div class="info-box-value"><a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" style="color:var(--blue);text-decoration:none">github.com/GeyuongGongPark/BYD-Health-Monitor</a></div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">문의 방법</div>
+      <div class="info-box-value"><a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/issues" style="color:var(--blue);text-decoration:none">GitHub Issues</a>를 통해 문의해 주세요.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="./index.html">BYD Health Monitor</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor" target="_blank">GitHub</a>
+    <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/issues" target="_blank">문의하기</a>
+  </div>
+  <p>BYD Health Monitor는 오픈 소스 프로젝트입니다. BYD와 공식적인 관련이 없습니다.</p>
+</footer>
+
+<script>
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('bhm-theme', t);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('theme-' + t).classList.add('active');
+  }
+  setTheme(localStorage.getItem('bhm-theme') || 'system');
+</script>
+</body>
+</html>
