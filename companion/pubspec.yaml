@@ -1,0 +1,38 @@
+name: byd_health_monitor_companion
+description: BYD Health Monitor companion app — receives fault alerts via FCM push and shows alert history.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^3.3.0
+  firebase_messaging: ^15.1.0
+
+  # Local notifications (foreground/background 알림 표시)
+  flutter_local_notifications: ^17.2.1
+
+  # HTTP
+  http: ^1.2.2
+
+  # 상태 관리
+  flutter_riverpod: ^2.5.1
+
+  # 날짜 포맷
+  intl: ^0.19.0
+
+  # 아이콘
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

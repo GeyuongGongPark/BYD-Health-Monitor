@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.coroutines.android)
     implementation(libs.core.ktx)
+    implementation(libs.okhttp)
 
     debugImplementation(libs.compose.ui.tooling)
 }
