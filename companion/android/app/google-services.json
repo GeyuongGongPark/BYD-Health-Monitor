@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "370943093622",
+    "project_id": "byd-health-monitor",
+    "storage_bucket": "byd-health-monitor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370943093622:android:4c93721d7f8eb96bcaa857",
+        "android_client_info": {
+          "package_name": "com.bydhealth.monitor.byd_health_monitor_companion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXiDEyfQuIq0bhJ1uPAca5TA3LbvaYVFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370943093622:android:b2a5edbec1d558d9caa857",
+        "android_client_info": {
+          "package_name": "com.bydhealth.monitor.companion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXiDEyfQuIq0bhJ1uPAca5TA3LbvaYVFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

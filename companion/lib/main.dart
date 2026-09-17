@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// flutterfire configure 실행 후 자동 생성됨
-// import 'firebase_options.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/alert_list_screen.dart';
@@ -13,9 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Firebase 초기화
-  // flutterfire configure 실행 후 아래 주석 해제
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // 알림 서비스 초기화 + 백그라운드 핸들러 등록
   await NotificationService.initialize();
