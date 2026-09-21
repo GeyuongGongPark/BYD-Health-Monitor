@@ -96,6 +96,30 @@
     .section-title { font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
     .section-desc { font-size: 17px; color: var(--text2); max-width: 520px; margin-bottom: 48px; }
 
+    /* APPS */
+    .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+    .app-card-header { display: flex; align-items: center; gap: 14px; }
+    .app-card-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+    .app-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+    .app-card .app-sub { font-size: 13px; color: var(--text2); }
+    .app-card p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+    .app-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
+
+    /* HOW IT WORKS */
+    .flow-wrap { display: flex; flex-direction: column; gap: 0; max-width: 700px; margin: 0 auto; }
+    .flow-node { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; }
+    .flow-node-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .flow-node-icon { font-size: 24px; }
+    .flow-node-title { font-size: 16px; font-weight: 700; }
+    .flow-node-sub { font-size: 12px; color: var(--text2); }
+    .flow-node ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .flow-node ul li { font-size: 14px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+    .flow-node ul li::before { content: "·"; color: var(--blue); font-weight: 700; }
+    .flow-arrow { text-align: center; padding: 6px 0; font-size: 22px; color: var(--blue); opacity: .6; }
+    .flow-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .flow-split { grid-template-columns: 1fr; } .apps-grid { grid-template-columns: 1fr; } }
+
     /* FEATURES */
     .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
     .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; transition: border-color .2s, transform .2s; }
@@ -149,6 +173,8 @@
 <nav>
   <div class="nav-logo">BYD <span>Health Monitor</span></div>
   <div class="nav-links">
+    <a href="#apps">Apps</a>
+    <a href="#how-it-works">How It Works</a>
     <a href="#features">Features</a>
     <a href="#score">Health Score</a>
     <a href="#install">Install</a>
@@ -232,6 +258,142 @@
     </div>
   </div>
 </div>
+
+<hr class="full-divider" />
+
+<!-- APPS -->
+<section id="apps">
+  <div class="section-label">App Components</div>
+  <h2 class="section-title">Three components, one system</h2>
+  <p class="section-desc">Vehicle, server, and smartphone work together seamlessly.</p>
+  <div class="apps-grid">
+
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-card-icon" style="background:rgba(26,140,255,.12)">🚗</div>
+        <div>
+          <h3>Vehicle App</h3>
+          <div class="app-sub">Installed on BYD DiLink headunit</div>
+        </div>
+      </div>
+      <p>Directly integrated with the BYD HAL OpenAPI to read real-time sensor data. Displays fault codes, tire pressure, and maintenance status on the in-car display. On CRITICAL fault detection, sends an alert to the relay server.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="app-tag" style="background:rgba(26,140,255,.1);color:var(--blue)">Kotlin</span>
+        <span class="app-tag" style="background:rgba(26,140,255,.1);color:var(--blue)">Jetpack Compose</span>
+        <span class="app-tag" style="background:rgba(26,140,255,.1);color:var(--blue)">Hilt · Room</span>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-card-icon" style="background:rgba(0,230,118,.12)">☁️</div>
+        <div>
+          <h3>Relay Server</h3>
+          <div class="app-sub">Deployed on Railway</div>
+        </div>
+      </div>
+      <p>Receives fault alerts from the vehicle app, persists them in PostgreSQL, and immediately forwards push notifications to all registered smartphones. Handles FCM/APNs delivery since DiLink has no GMS.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">Node.js</span>
+        <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">PostgreSQL</span>
+        <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">Firebase Admin</span>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-card-icon" style="background:rgba(255,214,0,.12)">📱</div>
+        <div>
+          <h3>Companion App</h3>
+          <div class="app-sub">iOS &amp; Android smartphones</div>
+        </div>
+      </div>
+      <p>Install on your personal smartphone to receive instant push notifications when a CRITICAL fault is detected, and browse the full alert history at any time. iOS uses APNs; Android uses FCM.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">Flutter</span>
+        <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">iOS APNs</span>
+        <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">Android FCM</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="full-divider" />
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">Fault detected. Phone notified.</h2>
+  <p class="section-desc">A real-time alert pipeline from vehicle to server to smartphone.</p>
+
+  <div class="flow-wrap">
+    <div class="flow-node" style="border-color:rgba(26,140,255,.35)">
+      <div class="flow-node-header">
+        <span class="flow-node-icon">🚗</span>
+        <div>
+          <div class="flow-node-title">BYD DiLink Vehicle App</div>
+          <div class="flow-node-sub">android/ · Kotlin + Jetpack Compose</div>
+        </div>
+      </div>
+      <ul>
+        <li>Reads sensor data in real-time via BYD HAL OpenAPI</li>
+        <li>Analyzes 23 fault codes and classifies severity</li>
+        <li>On CRITICAL fault: sends to server with 1-hr cooldown &amp; 3 retries</li>
+        <li>Displays fault, tire, and maintenance status on in-car screen</li>
+      </ul>
+    </div>
+
+    <div class="flow-arrow">↓ HTTP POST /alert</div>
+
+    <div class="flow-node" style="border-color:rgba(0,230,118,.35)">
+      <div class="flow-node-header">
+        <span class="flow-node-icon">☁️</span>
+        <div>
+          <div class="flow-node-title">Railway Relay Server</div>
+          <div class="flow-node-sub">server/ · Node.js + PostgreSQL</div>
+        </div>
+      </div>
+      <ul>
+        <li>Persists alert history in PostgreSQL</li>
+        <li>Sends APNs push to all registered iOS devices</li>
+        <li>Sends FCM push to all registered Android devices (500-batch)</li>
+        <li>Auto-cleans expired tokens weekly</li>
+      </ul>
+    </div>
+
+    <div class="flow-arrow">↓ APNs / FCM</div>
+
+    <div class="flow-split">
+      <div class="flow-node" style="border-color:rgba(255,214,0,.3)">
+        <div class="flow-node-header">
+          <span class="flow-node-icon">🍎</span>
+          <div>
+            <div class="flow-node-title">iOS Companion</div>
+            <div class="flow-node-sub">iPhone · APNs</div>
+          </div>
+        </div>
+        <ul>
+          <li>Instant push, even in background</li>
+          <li>Browse alert history</li>
+        </ul>
+      </div>
+      <div class="flow-node" style="border-color:rgba(255,214,0,.3)">
+        <div class="flow-node-header">
+          <span class="flow-node-icon">🤖</span>
+          <div>
+            <div class="flow-node-title">Android Companion</div>
+            <div class="flow-node-sub">Smartphone · FCM</div>
+          </div>
+        </div>
+        <ul>
+          <li>Instant push on GMS devices</li>
+          <li>Browse alert history</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
 <hr class="full-divider" />
 
