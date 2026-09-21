@@ -161,6 +161,34 @@
     .note-icon { font-size: 16px; flex-shrink: 0; line-height: 1.4; }
     .note p { font-size: 13px; color: var(--text2); }
 
+    /* PHONE MOCKUP */
+    .phones-wrap { display: flex; gap: 48px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+    .phone-container { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .phone-label { font-size: 12px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .phone-frame { width: 210px; background: #0a0e14; border-radius: 38px; border: 2px solid #252528; box-shadow: 0 0 0 1px #111, 0 32px 64px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.04); overflow: hidden; }
+    .phone-status { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 2px; font-size: 9px; color: rgba(255,255,255,.35); }
+    .phone-appbar { background: #131920; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .phone-appbar-title { font-size: 12px; font-weight: 600; color: #fff; }
+    .phone-refresh { font-size: 15px; color: #1a8cff; }
+    .phone-alerts { padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+    .phone-alert { background: #1a2332; border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,.06); display: flex; gap: 8px; align-items: flex-start; }
+    .phone-alert-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .phone-alert-body { flex: 1; min-width: 0; }
+    .phone-alert-row { display: flex; align-items: center; gap: 4px; margin-bottom: 3px; flex-wrap: wrap; }
+    .phone-alert-name { font-size: 10px; font-weight: 600; color: #fff; }
+    .phone-badge { font-size: 8px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+    .phone-alert-desc { font-size: 9px; color: #98989f; line-height: 1.4; }
+    .phone-alert-date { font-size: 8px; color: #5a5a60; margin-top: 2px; }
+    .phone-pair { padding: 24px 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .phone-pair-icon { font-size: 28px; }
+    .phone-pair-title { font-size: 14px; font-weight: 700; color: #fff; }
+    .phone-pair-desc { font-size: 9px; color: #98989f; text-align: center; line-height: 1.5; }
+    .phone-pair-boxes { display: flex; gap: 5px; align-items: center; }
+    .phone-pair-box { width: 28px; height: 36px; background: #1a2332; border: 1px solid rgba(26,140,255,.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: #fff; }
+    .phone-pair-sep { color: rgba(255,255,255,.25); font-size: 16px; margin: 0 2px; }
+    .phone-pair-btn { width: 100%; background: #1a8cff; border-radius: 12px; padding: 11px; text-align: center; font-size: 13px; font-weight: 600; color: #fff; }
+    .phone-pair-hint { font-size: 8px; color: #5a5a60; text-align: center; }
+
     /* FOOTER */
     footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 13px; }
     footer a { color: var(--text2); text-decoration: none; }
@@ -175,6 +203,7 @@
   <div class="nav-links">
     <a href="#apps">Apps</a>
     <a href="#how-it-works">How It Works</a>
+    <a href="#companion">Companion App</a>
     <a href="#features">Features</a>
     <a href="#score">Health Score</a>
     <a href="#install">Install</a>
@@ -411,6 +440,93 @@
         </ul>
       </div>
     </div>
+  </div>
+</section>
+
+<hr class="full-divider" />
+
+<!-- COMPANION PREVIEW -->
+<section id="companion">
+  <div class="section-label">Companion App</div>
+  <h2 class="section-title">Your phone, always in the loop</h2>
+  <p class="section-desc">Pair once with a 6-digit code, then receive real-time fault alerts wherever you are.</p>
+
+  <div class="phones-wrap">
+
+    <!-- Pair screen -->
+    <div class="phone-container">
+      <div class="phone-label">① One-time pairing</div>
+      <div class="phone-frame">
+        <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+        <div class="phone-appbar">
+          <div class="phone-appbar-title">BYD Health Monitor</div>
+        </div>
+        <div class="phone-pair">
+          <div class="phone-pair-icon">🔗</div>
+          <div class="phone-pair-title">Connect to Vehicle</div>
+          <div class="phone-pair-desc">Enter the 6-digit code shown<br>in the vehicle app's "Pair" tab</div>
+          <div class="phone-pair-boxes">
+            <div class="phone-pair-box">4</div>
+            <div class="phone-pair-box">8</div>
+            <div class="phone-pair-box">2</div>
+            <div class="phone-pair-sep">·</div>
+            <div class="phone-pair-box">9</div>
+            <div class="phone-pair-box">5</div>
+            <div class="phone-pair-box">1</div>
+          </div>
+          <div class="phone-pair-btn">Connect</div>
+          <div class="phone-pair-hint">Code expires in 5 minutes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert list screen -->
+    <div class="phone-container">
+      <div class="phone-label">② Real-time alerts</div>
+      <div class="phone-frame">
+        <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+        <div class="phone-appbar">
+          <div class="phone-appbar-title">BYD Health Monitor</div>
+          <div class="phone-refresh">↻</div>
+        </div>
+        <div class="phone-alerts">
+          <div class="phone-alert">
+            <div class="phone-alert-icon" style="background:rgba(255,59,59,.15)">🚨</div>
+            <div class="phone-alert-body">
+              <div class="phone-alert-row">
+                <div class="phone-alert-name">Coolant Temp Exceeded</div>
+                <div class="phone-badge" style="background:rgba(255,59,59,.15);color:#ff3b3b">CRITICAL</div>
+              </div>
+              <div class="phone-alert-desc">Coolant temperature exceeded the limit. Inspect immediately.</div>
+              <div class="phone-alert-date">2026.09.21 14:32</div>
+            </div>
+          </div>
+          <div class="phone-alert">
+            <div class="phone-alert-icon" style="background:rgba(255,140,0,.15)">⚠️</div>
+            <div class="phone-alert-body">
+              <div class="phone-alert-row">
+                <div class="phone-alert-name">Battery Cell Imbalance</div>
+                <div class="phone-badge" style="background:rgba(255,140,0,.15);color:#ff8c00">WARNING</div>
+              </div>
+              <div class="phone-alert-desc">High voltage deviation detected across battery cells.</div>
+              <div class="phone-alert-date">2026.09.20 09:15</div>
+            </div>
+          </div>
+          <div class="phone-alert">
+            <div class="phone-alert-icon" style="background:rgba(255,214,0,.15)">ℹ️</div>
+            <div class="phone-alert-body">
+              <div class="phone-alert-row">
+                <div class="phone-alert-name">Cabin PM2.5 Elevated</div>
+                <div class="phone-badge" style="background:rgba(255,214,0,.15);color:#ffd600">INFO</div>
+              </div>
+              <div class="phone-alert-desc">Indoor PM2.5 level is high. Ventilation recommended.</div>
+              <div class="phone-alert-date">2026.09.19 18:44</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
