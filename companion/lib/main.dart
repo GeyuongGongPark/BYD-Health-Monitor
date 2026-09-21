@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import 'screens/alert_list_screen.dart';
 import 'screens/pair_screen.dart';
 import 'services/api_service.dart';
 import 'services/notification_service.dart';
+import 'services/update_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -109,6 +112,42 @@ class _RootScreenState extends State<_RootScreen> {
   void initState() {
     super.initState();
     _pairedFuture = ApiService.isPaired();
+    _checkUpdate();
+  }
+
+  Future<void> _checkUpdate() async {
+    final info = await PackageInfo.fromPlatform();
+    final update = await UpdateService.checkForUpdate(info.version);
+    if (update != null && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showUpdateDialog(update));
+    }
+  }
+
+  void _showUpdateDialog(UpdateInfo info) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A2332),
+        title: const Text('업데이트', style: TextStyle(color: Colors.white)),
+        content: Text(
+          '새 버전 ${info.latestVersion} 이 있습니다.\n다운로드 페이지로 이동할까요?',
+          style: const TextStyle(color: Color(0xFF98989F)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('나중에', style: TextStyle(color: Color(0xFF98989F))),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              launchUrl(Uri.parse(info.releaseUrl), mode: LaunchMode.externalApplication);
+            },
+            child: const Text('다운로드', style: TextStyle(color: Color(0xFF1A8CFF))),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

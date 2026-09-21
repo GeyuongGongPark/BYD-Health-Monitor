@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bydhealth.monitor.domain.maintenance.MaintenanceStatus
 import com.bydhealth.monitor.ui.theme.*
+import com.bydhealth.monitor.data.network.UpdateInfo
 
 @Composable
 fun DashboardScreen(
@@ -33,8 +34,13 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val updateInfo by viewModel.updateInfo.collectAsState()
 
-    Box(Modifier.fillMaxSize().background(BackgroundDark)) {
+    Column(Modifier.fillMaxSize().background(BackgroundDark)) {
+        updateInfo?.let { info ->
+            UpdateBanner(info = info, onInstall = viewModel::installUpdate, onDismiss = viewModel::dismissUpdate)
+        }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = BydBlueBright)
@@ -112,6 +118,33 @@ fun DashboardScreen(
                     )
                 }
             }
+        }
+        } // Box weight(1f)
+    } // Column
+}
+
+@Composable
+private fun UpdateBanner(info: UpdateInfo, onInstall: () -> Unit, onDismiss: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(BydBlueBright)
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Default.SystemUpdate, null, tint = Color.White, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(
+            "새 버전 ${info.latestVersion} 이 있습니다",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White,
+            modifier = Modifier.weight(1f),
+        )
+        TextButton(onClick = onInstall) {
+            Text("업데이트", color = Color.White, fontWeight = FontWeight.Bold)
+        }
+        IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
+            Icon(Icons.Default.Close, null, tint = Color.White, modifier = Modifier.size(16.dp))
         }
     }
 }

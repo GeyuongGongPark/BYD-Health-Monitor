@@ -2,7 +2,11 @@ package com.bydhealth.monitor.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bydhealth.monitor.BuildConfig
 import com.bydhealth.monitor.data.local.MaintenanceRepositoryImpl
+import com.bydhealth.monitor.data.network.AppUpdater
+import com.bydhealth.monitor.data.network.UpdateChecker
+import com.bydhealth.monitor.data.network.UpdateInfo
 import com.bydhealth.monitor.data.vehicle.MalfunctionRepository
 import com.bydhealth.monitor.data.vehicle.StatisticRepository
 import com.bydhealth.monitor.data.vehicle.TyreRepository
@@ -13,6 +17,7 @@ import com.bydhealth.monitor.domain.malfunction.MalfunctionCatalog
 import com.bydhealth.monitor.domain.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DashboardUiState(
@@ -34,7 +39,26 @@ class DashboardViewModel @Inject constructor(
     private val tyreRepo: TyreRepository,
     private val statisticRepo: StatisticRepository,
     private val maintenanceRepo: MaintenanceRepositoryImpl,
+    private val updateChecker: UpdateChecker,
+    private val appUpdater: AppUpdater,
 ) : ViewModel() {
+
+    private val _updateInfo = MutableStateFlow<UpdateInfo?>(null)
+    val updateInfo: StateFlow<UpdateInfo?> = _updateInfo.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            updateChecker.checkForUpdate(BuildConfig.VERSION_NAME)
+                .onSuccess { _updateInfo.value = it }
+        }
+    }
+
+    fun installUpdate() {
+        val info = _updateInfo.value ?: return
+        appUpdater.downloadAndInstall(info.downloadUrl, info.latestVersion)
+    }
+
+    fun dismissUpdate() { _updateInfo.value = null }
 
     val uiState: StateFlow<DashboardUiState> = combine(
         malfunctionRepo.observeActiveCodes(),
