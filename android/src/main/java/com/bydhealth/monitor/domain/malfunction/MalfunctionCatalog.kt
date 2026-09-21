@@ -33,6 +33,9 @@ object MalfunctionCatalog {
         BYDAutoInstrumentDevice.MALFUNCTION_FRONT_BELT               to Entry("안전벨트 미착용 감지",           Severity.INFO,     "안전벨트를 착용하세요"),
     )
 
+    /** BYD API에 실제로 조회해야 할 상수 코드 목록 */
+    fun allCodes(): List<Int> = catalog.keys.toList()
+
     fun resolve(code: Int, isActive: Boolean = true): MalfunctionInfo? =
         catalog[code]?.let { entry ->
             MalfunctionInfo(

@@ -1,6 +1,8 @@
 package com.bydhealth.monitor.data.vehicle
 
+import android.util.Log
 import com.bydhealth.monitor.data.vehicle.mock.MockVehicleData
+import com.bydhealth.monitor.domain.malfunction.MalfunctionCatalog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +27,14 @@ class MalfunctionRepository @Inject constructor(
         while (true) {
             val device = apiLoader.instrumentDevice
             val activeCodes = if (device != null) {
-                ALL_CODES.filter { code -> device.getMalfunctionInfo(code) != 0 }
+                ALL_CODES.filter { code ->
+                    try {
+                        device.getMalfunctionInfo(code) != 0
+                    } catch (e: Throwable) {
+                        Log.w(TAG, "getMalfunctionInfo($code) failed: ${e.message}")
+                        false
+                    }
+                }
             } else {
                 MockVehicleData.activeMalfunctionCodes
             }
@@ -35,7 +44,9 @@ class MalfunctionRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     companion object {
+        private const val TAG = "MalfunctionRepository"
         private const val POLL_INTERVAL_MS = 5_000L
-        val ALL_CODES = (1..23).toList()
+        // (1..23) 임의 범위 대신 MalfunctionCatalog에 정의된 실제 BYD API 상수 목록 사용
+        val ALL_CODES: List<Int> = MalfunctionCatalog.allCodes()
     }
 }
