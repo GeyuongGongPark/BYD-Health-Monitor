@@ -248,6 +248,7 @@
         <div class="mock-nav-item"><div class="mock-nav-icon">⚠️</div>고장</div>
         <div class="mock-nav-item"><div class="mock-nav-icon">🔵</div>타이어</div>
         <div class="mock-nav-item"><div class="mock-nav-icon">🔧</div>정비</div>
+        <div class="mock-nav-item"><div class="mock-nav-icon">📱</div>연결</div>
       </div>
     </div>
   </div>
@@ -304,7 +305,7 @@
           <div class="app-sub">Railway 클라우드 배포</div>
         </div>
       </div>
-      <p>차량 앱에서 수신한 고장 알림을 PostgreSQL에 저장하고, 등록된 모든 스마트폰(iOS/Android)으로 즉시 push를 전송합니다. DiLink에 GMS가 없으므로 FCM/APNs 발송은 서버에서 처리합니다.</p>
+      <p>6자리 페어링 코드를 발급해 차량-스마트폰을 안전하게 연결합니다. 차량 앱에서 수신한 고장 알림을 PostgreSQL에 저장하고, 페어링된 스마트폰(iOS/Android)으로 즉시 push를 전송합니다. DiLink에 GMS가 없으므로 FCM/APNs 발송은 서버에서 처리합니다.</p>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">Node.js</span>
         <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">PostgreSQL</span>
@@ -321,7 +322,7 @@
           <div class="app-sub">iOS · Android 스마트폰 설치</div>
         </div>
       </div>
-      <p>운전자 스마트폰에 설치하는 앱입니다. CRITICAL 고장 발생 시 즉시 push 알림을 수신하고, 알림 이력을 언제든지 조회할 수 있습니다. iOS는 APNs, Android는 FCM으로 동작합니다.</p>
+      <p>운전자 스마트폰에 설치하는 앱입니다. 차량 앱에서 표시된 <strong>6자리 페어링 코드</strong>를 입력해 차량과 연결한 뒤, CRITICAL 고장 발생 시 즉시 push 알림을 수신하고 알림 이력을 언제든지 조회할 수 있습니다. iOS는 APNs, Android는 FCM으로 동작합니다.</p>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">Flutter</span>
         <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">iOS APNs</span>
@@ -341,6 +342,24 @@
   <p class="section-desc">차량 → 서버 → 스마트폰으로 이어지는 실시간 알림 파이프라인.</p>
 
   <div class="flow-wrap">
+
+    <div class="flow-node" style="border-color:rgba(255,214,0,.3);margin-bottom:0">
+      <div class="flow-node-header">
+        <span class="flow-node-icon">🔗</span>
+        <div>
+          <div class="flow-node-title">최초 1회 — 페어링 설정</div>
+          <div class="flow-node-sub">차량 앱 "연결" 탭 → 컴패니언 앱에서 코드 입력</div>
+        </div>
+      </div>
+      <ul>
+        <li>차량 앱이 서버에서 <strong>6자리 코드</strong> 발급 (5분 유효)</li>
+        <li>컴패니언 앱에서 코드를 입력하면 accessToken 발급 및 저장</li>
+        <li>이후 시동 ON/OFF 후에도 연결 상태 유지</li>
+      </ul>
+    </div>
+
+    <div class="flow-arrow">↓ 페어링 완료 후 평상시 동작</div>
+
     <div class="flow-node" style="border-color:rgba(26,140,255,.35)">
       <div class="flow-node-header">
         <span class="flow-node-icon">🚗</span>
@@ -456,6 +475,16 @@
       <h3>Mock 모드</h3>
       <p>실기기 없이도 전체 UI 동작 확인 가능. BYD OpenAPI 미지원 기기에서 자동으로 Mock 데이터로 전환.</p>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,214,0,.12)">🔗</div>
+      <h3>페어링 코드 연결</h3>
+      <p>차량 앱에서 6자리 코드를 발급하고, 컴패니언 앱에서 한 번 입력하면 차량-스마트폰이 연결됩니다. 이후 시동 재시작 후에도 연결 상태가 유지됩니다.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,230,118,.12)">🔄</div>
+      <h3>앱 내 자동 업데이트</h3>
+      <p>새 버전이 GitHub Releases에 출시되면 앱 안에서 바로 업데이트. 차량용 앱은 APK를 직접 다운로드·설치, 컴패니언 앱은 릴리즈 페이지로 안내합니다.</p>
+    </div>
   </div>
 </section>
 
@@ -529,10 +558,53 @@
 <!-- INSTALL -->
 <section id="install">
   <div class="section-label">설치</div>
-  <h2 class="section-title">직접 빌드해서 설치하세요</h2>
-  <p class="section-desc">Android Studio로 빌드 후 ADB로 차량 디스플레이에 설치합니다.</p>
+  <h2 class="section-title">APK 다운로드 또는 직접 빌드</h2>
+  <p class="section-desc">빌드 없이 APK를 직접 받아 설치하거나, 소스에서 빌드할 수 있습니다.</p>
+
+  <!-- 간편 설치 -->
+  <div class="install-card" style="margin-bottom:20px">
+    <h3>⚡ 간편 설치 — GitHub Releases에서 APK 다운로드</h3>
+    <p class="subtitle">빌드 없이 바로 설치합니다. 업데이트도 앱 안에서 자동으로 안내됩니다.</p>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-body">
+          <h4>APK 다운로드</h4>
+          <p><a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/releases/latest" target="_blank">GitHub Releases 최신 버전</a>에서 <code>byd-vehicle-vX.X.X.apk</code>를 다운로드합니다.</p>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-body">
+          <h4>차량 IP 확인</h4>
+          <p>디링크 설정 → 개발자 옵션에서 무선 ADB 활성화 후 차량 IP를 확인합니다.</p>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-body">
+          <h4>ADB로 설치</h4>
+          <div class="code-block">adb connect &lt;차량_IP&gt;:5555
+adb install byd-vehicle-vX.X.X.apk</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">4</div>
+        <div class="install-step-body">
+          <h4>컴패니언 앱 설치 (스마트폰)</h4>
+          <p>동일 Releases 페이지에서 <code>byd-companion-android-vX.X.X.apk</code>를 받아 스마트폰에 설치합니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <p>아직 실차 테스트가 충분히 진행되지 않았습니다. 차종/DiLink 버전에 따라 동작 여부가 다를 수 있습니다. 설치해보신 분들의 피드백을 기다립니다!</p>
+    </div>
+  </div>
+
+  <!-- 개발자용 빌드 -->
   <div class="install-card">
-    <h3>Android Studio로 빌드 및 설치</h3>
+    <h3>🛠 개발자용 — 소스에서 직접 빌드</h3>
     <p class="subtitle">BYD DiLink 차량에 USB로 연결하거나 무선 ADB로 설치합니다.</p>
     <div class="install-steps">
       <div class="install-step">
@@ -553,15 +625,7 @@ cd BYD-Health-Monitor</div>
       <div class="install-step">
         <div class="install-step-num">3</div>
         <div class="install-step-body">
-          <h4>(선택) BYD OpenAPI 연결</h4>
-          <p>실기기에서 ADB로 <code>bydauto-openapi.jar</code>를 추출해 <code>android/libs/</code>에 배치하면 실제 차량 데이터를 사용합니다. 생략 시 Mock 데이터로 동작합니다.</p>
-        </div>
-      </div>
-      <div class="install-step">
-        <div class="install-step-num">4</div>
-        <div class="install-step-body">
           <h4>DiLink에 APK 설치</h4>
-          <p>차량 USB 포트로 연결 후 Android Studio Run 버튼 또는:</p>
           <div class="code-block">./gradlew :android:installDebug</div>
         </div>
       </div>

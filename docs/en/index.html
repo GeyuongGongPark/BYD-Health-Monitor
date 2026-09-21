@@ -238,6 +238,7 @@
         <div class="mock-nav-item"><div class="mock-nav-icon">⚠️</div>Faults</div>
         <div class="mock-nav-item"><div class="mock-nav-icon">🔵</div>Tires</div>
         <div class="mock-nav-item"><div class="mock-nav-icon">🔧</div>Service</div>
+        <div class="mock-nav-item"><div class="mock-nav-icon">📱</div>Pair</div>
       </div>
     </div>
   </div>
@@ -292,7 +293,7 @@
           <div class="app-sub">Deployed on Railway</div>
         </div>
       </div>
-      <p>Receives fault alerts from the vehicle app, persists them in PostgreSQL, and immediately forwards push notifications to all registered smartphones. Handles FCM/APNs delivery since DiLink has no GMS.</p>
+      <p>Issues 6-digit pairing codes to securely link vehicles with smartphones. Receives fault alerts from the vehicle app, persists them in PostgreSQL, and immediately forwards push notifications to paired smartphones. Handles FCM/APNs delivery since DiLink has no GMS.</p>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">Node.js</span>
         <span class="app-tag" style="background:rgba(0,230,118,.1);color:var(--green)">PostgreSQL</span>
@@ -308,7 +309,7 @@
           <div class="app-sub">iOS &amp; Android smartphones</div>
         </div>
       </div>
-      <p>Install on your personal smartphone to receive instant push notifications when a CRITICAL fault is detected, and browse the full alert history at any time. iOS uses APNs; Android uses FCM.</p>
+      <p>Install on your smartphone and enter the <strong>6-digit pairing code</strong> shown on the vehicle app to link your devices. Receive instant push alerts on CRITICAL faults and browse the full alert history at any time. Connection persists across engine restarts. iOS uses APNs; Android uses FCM.</p>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">Flutter</span>
         <span class="app-tag" style="background:rgba(255,214,0,.1);color:var(--yellow)">iOS APNs</span>
@@ -328,6 +329,24 @@
   <p class="section-desc">A real-time alert pipeline from vehicle to server to smartphone.</p>
 
   <div class="flow-wrap">
+
+    <div class="flow-node" style="border-color:rgba(255,214,0,.3);margin-bottom:0">
+      <div class="flow-node-header">
+        <span class="flow-node-icon">🔗</span>
+        <div>
+          <div class="flow-node-title">One-time Setup — Pairing</div>
+          <div class="flow-node-sub">Vehicle app "Pair" tab → enter code in companion app</div>
+        </div>
+      </div>
+      <ul>
+        <li>Vehicle app requests a <strong>6-digit code</strong> from the server (valid 5 min)</li>
+        <li>Enter the code in the companion app → accessToken issued &amp; stored</li>
+        <li>Connection persists across engine restarts</li>
+      </ul>
+    </div>
+
+    <div class="flow-arrow">↓ Normal operation after pairing</div>
+
     <div class="flow-node" style="border-color:rgba(26,140,255,.35)">
       <div class="flow-node-header">
         <span class="flow-node-icon">🚗</span>
@@ -443,6 +462,16 @@
       <h3>Mock Mode</h3>
       <p>Full UI works without a real vehicle. Automatically falls back to mock data when BYD OpenAPI is unavailable.</p>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,214,0,.12)">🔗</div>
+      <h3>Pairing Code Link</h3>
+      <p>The vehicle app generates a 6-digit code. Enter it once in the companion app to link your phone. The connection survives engine restarts automatically.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,230,118,.12)">🔄</div>
+      <h3>In-App Auto Update</h3>
+      <p>When a new version is released on GitHub, the vehicle app downloads and installs the APK directly. The companion app guides you to the release page.</p>
+    </div>
   </div>
 </section>
 
@@ -516,10 +545,53 @@
 <!-- INSTALL -->
 <section id="install">
   <div class="section-label">Install</div>
-  <h2 class="section-title">Build and sideload</h2>
-  <p class="section-desc">Build with Android Studio and deploy to your DiLink display via ADB.</p>
+  <h2 class="section-title">Download APK or build from source</h2>
+  <p class="section-desc">Grab a pre-built APK from GitHub Releases, or build it yourself.</p>
+
+  <!-- Quick Install -->
+  <div class="install-card" style="margin-bottom:20px">
+    <h3>⚡ Quick Install — Download APK from GitHub Releases</h3>
+    <p class="subtitle">No build tools needed. Future updates are prompted automatically inside the app.</p>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-body">
+          <h4>Download the APK</h4>
+          <p>Visit <a href="https://github.com/GeyuongGongPark/BYD-Health-Monitor/releases/latest" target="_blank">GitHub Releases (latest)</a> and download <code>byd-vehicle-vX.X.X.apk</code>.</p>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-body">
+          <h4>Find your vehicle IP</h4>
+          <p>Enable Wireless ADB in DiLink Settings → Developer Options and note the IP address.</p>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-body">
+          <h4>Install via ADB</h4>
+          <div class="code-block">adb connect &lt;vehicle_IP&gt;:5555
+adb install byd-vehicle-vX.X.X.apk</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">4</div>
+        <div class="install-step-body">
+          <h4>Install the Companion App (smartphone)</h4>
+          <p>From the same Releases page, download <code>byd-companion-android-vX.X.X.apk</code> and install it on your phone.</p>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <p>Real-vehicle testing is still limited. Behavior may vary by model and DiLink version. We welcome feedback from early testers!</p>
+    </div>
+  </div>
+
+  <!-- Developer Build -->
   <div class="install-card">
-    <h3>Build &amp; Install via Android Studio</h3>
+    <h3>🛠 Developer — Build from source</h3>
     <p class="subtitle">Connect your BYD DiLink via USB or wireless ADB to install directly.</p>
     <div class="install-steps">
       <div class="install-step">
@@ -540,15 +612,7 @@ cd BYD-Health-Monitor</div>
       <div class="install-step">
         <div class="install-step-num">3</div>
         <div class="install-step-body">
-          <h4>(Optional) Connect BYD OpenAPI</h4>
-          <p>Extract <code>bydauto-openapi.jar</code> from a real DiLink unit via ADB and place it in <code>android/libs/</code>. Skip this step to run in Mock mode.</p>
-        </div>
-      </div>
-      <div class="install-step">
-        <div class="install-step-num">4</div>
-        <div class="install-step-body">
           <h4>Deploy to DiLink</h4>
-          <p>Connect your vehicle via USB, then hit Run in Android Studio or run:</p>
           <div class="code-block">./gradlew :android:installDebug</div>
         </div>
       </div>
