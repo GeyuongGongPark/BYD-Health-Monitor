@@ -1,6 +1,7 @@
 package com.bydhealth.monitor.data.vehicle
 
 import android.content.Context
+import android.hardware.bydauto.bodywork.BYDAutoBodyworkDevice
 import android.hardware.bydauto.engine.BYDAutoEngineDevice
 import android.hardware.bydauto.gearbox.BYDAutoGearboxDevice
 import android.hardware.bydauto.instrument.BYDAutoInstrumentDevice
@@ -35,6 +36,10 @@ class BydApiLoader @Inject constructor(
 
     val statisticDevice: BYDAutoStatisticDevice? by lazy {
         tryLoad("StatisticDevice") { BYDAutoStatisticDevice.getInstance(context) }
+    }
+
+    val bodyworkDevice: BYDAutoBodyworkDevice? by lazy {
+        tryLoad("BodyworkDevice") { BYDAutoBodyworkDevice.getInstance(context) }
     }
 
     val engineDevice: BYDAutoEngineDevice? by lazy {

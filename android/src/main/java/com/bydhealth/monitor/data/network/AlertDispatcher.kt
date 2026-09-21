@@ -3,6 +3,7 @@ package com.bydhealth.monitor.data.network
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.bydhealth.monitor.BuildConfig
 import com.bydhealth.monitor.domain.model.MalfunctionInfo
 import com.bydhealth.monitor.domain.model.Severity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -33,9 +34,8 @@ class AlertDispatcher @Inject constructor(
     @ApplicationContext private val context: Context,
     private val networkStateMonitor: NetworkStateMonitor,
 ) {
-    // 빌드 시 BuildConfig 또는 환경별 설정으로 교체
-    private val serverUrl = "https://byd-server-production.up.railway.app/alert"
-    private val apiKey    = "04481698d4b2dff5dcc8d39a811c2c501025da86f90f2d52f0b098cbba5fa7f4"
+    private val serverUrl = "${BuildConfig.SERVER_BASE_URL}/alert"
+    private val apiKey    = BuildConfig.SERVER_API_KEY
 
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -48,6 +48,10 @@ class AlertDispatcher @Inject constructor(
     suspend fun dispatch(malfunctions: List<MalfunctionInfo>, vin: String? = null) {
         if (!networkStateMonitor.hasActiveNetwork()) {
             Log.w(TAG, "No network, skipping dispatch")
+            return
+        }
+        if (apiKey.isBlank()) {
+            Log.w(TAG, "SERVER_API_KEY is missing, skipping dispatch")
             return
         }
 

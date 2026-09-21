@@ -95,14 +95,18 @@
 
   <div class="page-badge">법적 고지</div>
   <h1>개인정보 처리방침</h1>
-  <p class="updated">최종 수정일: 2026년 9월 17일</p>
+  <p class="updated">최종 수정일: 2026년 9월 21일</p>
 
   <!-- 1 -->
   <div class="section">
     <h2>1. 개요</h2>
-    <p>BYD Health Monitor(이하 "앱")는 BYD 차량 내장 디스플레이(DiLink)에서 실행되는 오픈 소스 차량 건강 모니터링 앱입니다.</p>
+    <p>BYD Health Monitor는 두 가지 앱으로 구성됩니다.</p>
+    <ul>
+      <li><strong>차량용 앱</strong> — BYD 차량 내장 디스플레이(DiLink)에서 실행. 고장 코드, 타이어 상태, 소모품 이력을 관리하고 CRITICAL 고장 발생 시 중계 서버를 통해 컴패니언 앱에 알림을 전송합니다.</li>
+      <li><strong>컴패니언 앱</strong> — 운전자 스마트폰(iOS / Android)에 설치. CRITICAL 고장 푸시 알림 수신 및 알림 이력을 조회합니다.</li>
+    </ul>
     <div class="highlight">
-      <p>본 앱은 사용자의 개인 식별 정보를 수집하지 않습니다. 모든 데이터는 차량 기기 내에 저장되며 외부 서버로 전송되지 않습니다.</p>
+      <p>본 앱은 사용자의 이름, 이메일, 전화번호 등 개인 식별 정보를 수집하지 않습니다. 서버에 전송되는 데이터는 차량 고장 정보와 푸시 토큰에 한정됩니다.</p>
     </div>
   </div>
 
@@ -121,7 +125,7 @@
       <tbody>
         <tr>
           <td>차량 고장 코드</td>
-          <td>BYD HAL API에서 실시간 조회. 23종 고장 코드 활성 여부.</td>
+          <td>BYD HAL API에서 실시간 조회. 23종 고장 코드 활성 여부 및 심각도(CRITICAL/WARNING/INFO).</td>
           <td><span class="badge badge-none">메모리(비저장)</span></td>
         </tr>
         <tr>
@@ -137,11 +141,26 @@
         <tr>
           <td>소모품 교체 이력</td>
           <td>사용자가 직접 입력한 교체 일자, 교체 시 주행거리, 메모.</td>
-          <td><span class="badge badge-local">기기 내 로컬 DB</span></td>
+          <td><span class="badge badge-local">차량 기기 내 로컬 DB</span></td>
+        </tr>
+        <tr>
+          <td>CRITICAL 알림 이력</td>
+          <td>긴급 고장 감지 시 서버로 전송되는 고장 코드 번호, 심각도, 고장명, 설명, VIN(선택). 알림 이력은 서버 DB에 보관됩니다.</td>
+          <td><span class="badge" style="background:rgba(26,140,255,.12);color:var(--blue);border:1px solid rgba(26,140,255,.2)">중계 서버 DB</span></td>
+        </tr>
+        <tr>
+          <td>푸시 토큰 (FCM / APNs)</td>
+          <td>컴패니언 앱 설치 후 페어링 시 생성되는 기기 식별 토큰. 알림 전송에만 사용됩니다.</td>
+          <td><span class="badge" style="background:rgba(26,140,255,.12);color:var(--blue);border:1px solid rgba(26,140,255,.2)">중계 서버 DB</span></td>
+        </tr>
+        <tr>
+          <td>페어링 코드 / vehicle_id</td>
+          <td>차량 앱과 컴패니언 앱을 연결하기 위한 임시 6자리 코드(5분 유효). 사용 후 폐기됩니다. vehicle_id는 내부 식별용 UUID입니다.</td>
+          <td><span class="badge badge-local">차량 기기(임시)</span></td>
         </tr>
       </tbody>
     </table>
-    <p>차량 데이터는 앱 실행 중 실시간으로 조회되며, 세션이 종료되면 메모리에서 삭제됩니다. 소모품 교체 이력만 사용자 요청에 의해 기기 내 Room 데이터베이스에 저장됩니다.</p>
+    <p>차량 실시간 데이터는 세션 종료 시 메모리에서 삭제됩니다. 소모품 이력은 차량 기기 내에만 저장됩니다. 알림 이력과 푸시 토큰은 운전자 알림 전송 목적으로만 중계 서버에 저장됩니다.</p>
   </div>
 
   <!-- 3 -->
@@ -160,11 +179,11 @@
   <!-- 4 -->
   <div class="section">
     <h2>4. 데이터 저장 및 보안</h2>
-    <p>소모품 교체 이력은 차량 디스플레이(DiLink) 기기 내 SQLite 데이터베이스(Room)에만 저장됩니다. 외부 서버, 클라우드 스토리지로 전송되거나 동기화되지 않습니다.</p>
+    <p><strong>차량 기기(DiLink):</strong> 소모품 교체 이력은 기기 내 SQLite(Room)에만 저장됩니다. 앱 삭제 시 함께 삭제됩니다.</p>
+    <p><strong>중계 서버(Railway.app):</strong> CRITICAL 알림 이력과 FCM/APNs 토큰은 Railway에 배포된 PostgreSQL 데이터베이스에 저장됩니다. 토큰은 마지막 활동 후 90일이 경과하면 자동 삭제됩니다. 서버와의 모든 통신은 HTTPS(TLS)로 암호화됩니다.</p>
     <ul>
-      <li>앱 삭제 시 기기 내 저장 데이터가 함께 삭제됩니다.</li>
-      <li>타사 SDK, 광고 네트워크, 분석 도구가 포함되어 있지 않습니다.</li>
-      <li>인터넷 연결이 없어도 앱의 모든 기능이 동작합니다.</li>
+      <li>광고 네트워크, 사용자 행동 분석 도구는 포함되어 있지 않습니다.</li>
+      <li>수집된 데이터는 알림 전송 및 이력 제공 이외의 목적으로 사용되지 않습니다.</li>
     </ul>
   </div>
 
@@ -174,22 +193,22 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>권한</th>
+          <th>권한 (앱)</th>
           <th>사용 목적</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>POST_NOTIFICATIONS</td>
-          <td>CRITICAL 긴급 고장 코드 감지 시 상태바 알림 표시. 알림을 원하지 않으면 시스템 설정에서 비활성화할 수 있습니다.</td>
+          <td>POST_NOTIFICATIONS (차량·컴패니언)</td>
+          <td>CRITICAL 긴급 고장 감지 시 알림 표시. 시스템 설정에서 비활성화할 수 있습니다.</td>
         </tr>
         <tr>
-          <td>INTERNET</td>
-          <td>Phase 7(스마트폰 연동) 구현 시 사용 예정. 현재 버전에서는 사용하지 않습니다.</td>
+          <td>INTERNET (차량·컴패니언)</td>
+          <td>차량 앱: CRITICAL 고장 정보를 중계 서버로 전송. 컴패니언 앱: 알림 이력 조회 및 토큰 등록.</td>
         </tr>
         <tr>
-          <td>FOREGROUND_SERVICE</td>
-          <td>백그라운드 차량 데이터 모니터링을 위한 포그라운드 서비스 (구현 예정).</td>
+          <td>ACCESS_NETWORK_STATE (차량)</td>
+          <td>네트워크 연결 여부 확인 후 알림 전송 여부 결정.</td>
         </tr>
       </tbody>
     </table>
@@ -197,15 +216,15 @@
 
   <!-- 6 -->
   <div class="section">
-    <h2>6. 제3자 공유</h2>
-    <div class="highlight">
-      <p>본 앱은 수집된 어떠한 데이터도 제3자에게 판매, 공유, 전송하지 않습니다.</p>
-    </div>
-    <p>타사 라이브러리는 아래와 같이 사용됩니다. 해당 라이브러리들은 사용자 데이터를 수집하거나 전송하지 않습니다.</p>
+    <h2>6. 제3자 서비스</h2>
+    <p>알림 전송을 위해 아래 제3자 서비스를 사용합니다.</p>
     <ul>
-      <li>Jetpack Compose, Hilt, Room — Google Android Jetpack (Apache 2.0)</li>
-      <li>Kotlin Coroutines — JetBrains (Apache 2.0)</li>
+      <li><strong>Firebase Cloud Messaging (Google)</strong> — Android 컴패니언 앱 푸시 알림 전송. <a href="https://firebase.google.com/support/privacy" target="_blank" style="color:var(--blue)">Firebase 개인정보처리방침</a></li>
+      <li><strong>Apple Push Notification service (Apple)</strong> — iOS 컴패니언 앱 푸시 알림 전송. <a href="https://www.apple.com/legal/privacy/" target="_blank" style="color:var(--blue)">Apple 개인정보처리방침</a></li>
+      <li><strong>Railway.app</strong> — 중계 서버 및 PostgreSQL 호스팅. <a href="https://railway.app/legal/privacy" target="_blank" style="color:var(--blue)">Railway 개인정보처리방침</a></li>
     </ul>
+    <p>위 서비스는 알림 전송 목적 외에 사용자 데이터를 수집하거나 광고에 활용하지 않습니다.</p>
+    <p>오픈 소스 라이브러리: Jetpack Compose, Hilt, Room, OkHttp (Apache 2.0) / Flutter, Riverpod, Firebase Flutter SDK (BSD-3)</p>
   </div>
 
   <!-- 7 -->
@@ -217,7 +236,7 @@
   <!-- 8 -->
   <div class="section">
     <h2>8. 방침 변경</h2>
-    <p>본 개인정보 처리방침은 앱 업데이트 또는 기능 추가(특히 Phase 7 스마트폰 연동 기능)에 따라 변경될 수 있습니다. 변경 시 이 페이지에 수정일을 표기하고 GitHub 저장소를 통해 공지합니다.</p>
+    <p>본 개인정보 처리방침은 앱 업데이트 시 변경될 수 있습니다. 변경 시 이 페이지에 수정일을 표기하고 GitHub 저장소를 통해 공지합니다.</p>
   </div>
 
   <!-- 9 -->
@@ -225,7 +244,7 @@
     <h2>9. 문의</h2>
     <div class="info-box">
       <div class="info-box-title">개발자</div>
-      <div class="info-box-value">GeyuongGongPark</div>
+      <div class="info-box-value">GyeuongGongPark</div>
     </div>
     <div class="info-box">
       <div class="info-box-title">GitHub</div>

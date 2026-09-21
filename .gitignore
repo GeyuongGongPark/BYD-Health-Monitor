@@ -1,0 +1,43 @@
+# ── Gradle 빌드 산출물 ──────────────────────────────────────────────────────
+.gradle/
+build/
+*/build/
+**/build/
+
+# ── Kotlin 컴파일 캐시 ─────────────────────────────────────────────────────
+.kotlin/
+**/.kotlin/
+
+# ── Android ────────────────────────────────────────────────────────────────
+*.apk
+*.aab
+*.ap_
+local.properties
+
+# ── IntelliJ / Android Studio ──────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ── Flutter ────────────────────────────────────────────────────────────────
+companion/.dart_tool/
+companion/.flutter-plugins
+companion/.flutter-plugins-dependencies
+companion/flutter_export_environment.sh
+
+# ── macOS ──────────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ── Node.js ────────────────────────────────────────────────────────────────
+node_modules/
+server/node_modules/
+*.log
+
+# ── 환경변수 / 시크릿 ───────────────────────────────────────────────────────
+.env
+.env.*
+google-services.json
+GoogleService-Info.plist

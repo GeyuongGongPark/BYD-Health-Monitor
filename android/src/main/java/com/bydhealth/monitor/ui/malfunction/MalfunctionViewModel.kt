@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bydhealth.monitor.data.network.AlertDispatcher
 import com.bydhealth.monitor.data.vehicle.MalfunctionRepository
+import com.bydhealth.monitor.data.vehicle.VehicleIdentityRepository
 import com.bydhealth.monitor.domain.malfunction.MalfunctionCatalog
 import com.bydhealth.monitor.domain.model.MalfunctionInfo
 import com.bydhealth.monitor.domain.model.Severity
@@ -27,6 +28,7 @@ data class MalfunctionUiState(
 class MalfunctionViewModel @Inject constructor(
     private val repository: MalfunctionRepository,
     private val alertDispatcher: AlertDispatcher,
+    private val vehicleIdentityRepository: VehicleIdentityRepository,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -56,7 +58,7 @@ class MalfunctionViewModel @Inject constructor(
             lastNotifiedCritical = currentCritical
             // 새 CRITICAL 발생 시 Railway 서버로 알림 전송 (FCM → 컴패니언 앱)
             viewModelScope.launch {
-                alertDispatcher.dispatch(malfunctions)
+                alertDispatcher.dispatch(malfunctions, vehicleIdentityRepository.getVin())
             }
         }
     }

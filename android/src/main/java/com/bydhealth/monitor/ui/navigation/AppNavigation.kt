@@ -3,6 +3,7 @@ package com.bydhealth.monitor.ui.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import com.bydhealth.monitor.ui.dashboard.DashboardScreen
 import com.bydhealth.monitor.ui.maintenance.MaintenanceHistoryScreen
 import com.bydhealth.monitor.ui.maintenance.MaintenanceScreen
 import com.bydhealth.monitor.ui.malfunction.MalfunctionScreen
+import com.bydhealth.monitor.ui.pairing.PairingScreen
 import com.bydhealth.monitor.ui.theme.*
 import com.bydhealth.monitor.ui.tyre.TyreScreen
 
@@ -22,6 +24,7 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     object Malfunction : Screen("malfunction", "고장",    Icons.Default.Warning)
     object Tyre        : Screen("tyre",        "타이어",   Icons.Default.Speed)
     object Maintenance : Screen("maintenance", "정비",    Icons.Default.Build)
+    object Pairing     : Screen("pairing",     "연결",    Icons.Default.PhoneAndroid)
 }
 
 private val bottomNavItems = listOf(
@@ -29,6 +32,7 @@ private val bottomNavItems = listOf(
     Screen.Malfunction,
     Screen.Tyre,
     Screen.Maintenance,
+    Screen.Pairing,
 )
 
 @Composable
@@ -88,6 +92,7 @@ fun AppNavigation() {
             composable("maintenance_history") {
                 MaintenanceHistoryScreen(onBack = { navController.popBackStack() })
             }
+            composable(Screen.Pairing.route) { PairingScreen() }
         }
     }
 }

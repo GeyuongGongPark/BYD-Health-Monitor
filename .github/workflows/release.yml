@@ -1,0 +1,132 @@
+name: Release
+
+# v0.0.1 형식의 태그 push 시 트리거
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  # ── 1. 차량용 앱 (DiLink Android) ─────────────────────────────────────────
+  build-vehicle:
+    name: Build Vehicle APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      # 태그에서 버전 추출 (v0.0.1 → 0.0.1 / versionCode: run number)
+      - name: Extract version
+        id: ver
+        run: |
+          TAG=${GITHUB_REF_NAME}           # e.g. v0.0.1
+          VER=${TAG#v}                     # e.g. 0.0.1
+          echo "name=$VER" >> $GITHUB_OUTPUT
+          echo "code=$GITHUB_RUN_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Build Release APK
+        run: >
+          gradle :android:assembleRelease
+          -PBYD_SERVER_API_KEY=${{ secrets.BYD_SERVER_API_KEY }}
+          -PversionName=${{ steps.ver.outputs.name }}
+          -PversionCode=${{ steps.ver.outputs.code }}
+
+      # APK 이름을 버전 포함으로 변경
+      - name: Rename APK
+        run: |
+          mv android/build/outputs/apk/release/android-release.apk \
+             byd-vehicle-${{ github.ref_name }}.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vehicle-apk
+          path: byd-vehicle-${{ github.ref_name }}.apk
+
+  # ── 2. 컴패니언 앱 Android (Flutter) ──────────────────────────────────────
+  build-companion-android:
+    name: Build Companion Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        working-directory: companion
+        run: flutter pub get
+
+      - name: Build Release APK
+        working-directory: companion
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: |
+          mv companion/build/app/outputs/flutter-apk/app-release.apk \
+             byd-companion-android-${{ github.ref_name }}.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: companion-android-apk
+          path: byd-companion-android-${{ github.ref_name }}.apk
+
+  # ── 3. GitHub Releases 생성 + APK 첨부 ────────────────────────────────────
+  release:
+    name: Create GitHub Release
+    needs: [build-vehicle, build-companion-android]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 릴리즈 생성 권한
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vehicle-apk
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: companion-android-apk
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          generate_release_notes: true   # 이전 태그 이후 커밋 자동 정리
+          files: |
+            byd-vehicle-${{ github.ref_name }}.apk
+            byd-companion-android-${{ github.ref_name }}.apk
+          body: |
+            ## 설치 방법
+
+            ### 차량용 앱 (BYD DiLink)
+            ```bash
+            adb connect <차량_IP>:5555
+            adb install byd-vehicle-${{ github.ref_name }}.apk
+            ```
+
+            ### 컴패니언 앱 (Android 스마트폰)
+            ```bash
+            adb install byd-companion-android-${{ github.ref_name }}.apk
+            ```
+
+            ### iOS 컴패니언 앱
+            TestFlight를 통해 배포됩니다. 별도 초대 링크를 확인하세요.

@@ -95,14 +95,18 @@
 
   <div class="page-badge">Legal</div>
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: September 17, 2026</p>
+  <p class="updated">Last updated: September 21, 2026</p>
 
   <!-- 1 -->
   <div class="section">
     <h2>1. Overview</h2>
-    <p>BYD Health Monitor (the "App") is an open-source vehicle health monitoring app that runs on the BYD DiLink in-car display.</p>
+    <p>BYD Health Monitor consists of two apps.</p>
+    <ul>
+      <li><strong>Vehicle App</strong> — Runs on the BYD DiLink in-car display. Monitors fault codes, tire status, and maintenance history. Sends CRITICAL fault alerts to your smartphone via a relay server.</li>
+      <li><strong>Companion App</strong> — Installed on your smartphone (iOS / Android). Receives push notifications for CRITICAL faults and displays alert history.</li>
+    </ul>
     <div class="highlight">
-      <p>This App does not collect any personally identifiable information. All data remains on the vehicle device and is never transmitted to external servers.</p>
+      <p>This App does not collect personally identifiable information such as your name, email, or phone number. Data transmitted to the server is limited to vehicle fault information and push tokens.</p>
     </div>
   </div>
 
@@ -121,7 +125,7 @@
       <tbody>
         <tr>
           <td>Fault Codes</td>
-          <td>Real-time status of 23 fault codes via BYD HAL API.</td>
+          <td>Real-time status of 23 fault codes via BYD HAL API, including severity (CRITICAL/WARNING/INFO).</td>
           <td><span class="badge badge-none">In-memory only</span></td>
         </tr>
         <tr>
@@ -139,9 +143,24 @@
           <td>Replacement records entered manually by the user: date, mileage, and optional notes.</td>
           <td><span class="badge badge-local">Local device DB</span></td>
         </tr>
+        <tr>
+          <td>CRITICAL Alert History</td>
+          <td>Fault code number, severity, fault name, description, and optional VIN sent to the relay server when a CRITICAL fault is detected. Stored in the server database.</td>
+          <td><span class="badge" style="background:rgba(26,140,255,.12);color:var(--blue);border:1px solid rgba(26,140,255,.2)">Relay Server DB</span></td>
+        </tr>
+        <tr>
+          <td>Push Token (FCM / APNs)</td>
+          <td>A device-specific token generated when the companion app is installed and paired. Used solely for sending push notifications.</td>
+          <td><span class="badge" style="background:rgba(26,140,255,.12);color:var(--blue);border:1px solid rgba(26,140,255,.2)">Relay Server DB</span></td>
+        </tr>
+        <tr>
+          <td>Pairing Code / vehicle_id</td>
+          <td>A temporary 6-digit code (valid for 5 minutes) used to pair the vehicle app with the companion app. Invalidated immediately after use. The vehicle_id is an internal UUID.</td>
+          <td><span class="badge badge-local">Device (temporary)</span></td>
+        </tr>
       </tbody>
     </table>
-    <p>Vehicle data is queried in real time during app use and discarded when the session ends. Only user-entered maintenance history is persisted to an on-device Room database.</p>
+    <p>Real-time vehicle data is discarded when the session ends. Maintenance history is stored only on the vehicle device. Alert history and push tokens are stored on the relay server solely for notification delivery.</p>
   </div>
 
   <!-- 3 -->
@@ -160,11 +179,11 @@
   <!-- 4 -->
   <div class="section">
     <h2>4. Data Storage &amp; Security</h2>
-    <p>Maintenance history is stored exclusively in an SQLite database (Room) on the DiLink device itself. It is never synced to external servers or cloud storage.</p>
+    <p><strong>Vehicle device (DiLink):</strong> Maintenance history is stored exclusively in an SQLite database (Room) on the device. Uninstalling the App deletes this data permanently.</p>
+    <p><strong>Relay server (Railway.app):</strong> CRITICAL alert history and FCM/APNs tokens are stored in a PostgreSQL database hosted on Railway. Tokens are automatically deleted after 90 days of inactivity. All communication with the server uses HTTPS (TLS).</p>
     <ul>
-      <li>Uninstalling the App permanently deletes all locally stored data.</li>
-      <li>No third-party SDKs, ad networks, or analytics tools are included.</li>
-      <li>The App functions fully without an internet connection.</li>
+      <li>No advertising networks or user-behavior analytics tools are included.</li>
+      <li>Collected data is used exclusively for delivering notifications and providing alert history.</li>
     </ul>
   </div>
 
@@ -174,22 +193,22 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>Permission</th>
+          <th>Permission (App)</th>
           <th>Purpose</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>POST_NOTIFICATIONS</td>
-          <td>Displays a status bar notification when a CRITICAL fault code is detected. You can disable this at any time in system settings.</td>
+          <td>POST_NOTIFICATIONS (Vehicle &amp; Companion)</td>
+          <td>Displays a notification when a CRITICAL fault is detected. You can disable this in system settings at any time.</td>
         </tr>
         <tr>
-          <td>INTERNET</td>
-          <td>Reserved for Phase 7 (smartphone integration). Not used in the current version.</td>
+          <td>INTERNET (Vehicle &amp; Companion)</td>
+          <td>Vehicle App: Sends CRITICAL fault data to the relay server. Companion App: Retrieves alert history and registers push tokens.</td>
         </tr>
         <tr>
-          <td>FOREGROUND_SERVICE</td>
-          <td>For background vehicle monitoring via a foreground service (planned).</td>
+          <td>ACCESS_NETWORK_STATE (Vehicle)</td>
+          <td>Checks for network connectivity before attempting to send an alert.</td>
         </tr>
       </tbody>
     </table>
@@ -197,15 +216,15 @@
 
   <!-- 6 -->
   <div class="section">
-    <h2>6. Third-Party Sharing</h2>
-    <div class="highlight">
-      <p>We do not sell, share, or transmit any data to third parties.</p>
-    </div>
-    <p>The App uses the following open-source libraries. None of them collect or transmit user data.</p>
+    <h2>6. Third-Party Services</h2>
+    <p>The following third-party services are used to deliver push notifications.</p>
     <ul>
-      <li>Jetpack Compose, Hilt, Room — Google Android Jetpack (Apache 2.0)</li>
-      <li>Kotlin Coroutines — JetBrains (Apache 2.0)</li>
+      <li><strong>Firebase Cloud Messaging (Google)</strong> — Android companion app push notifications. <a href="https://firebase.google.com/support/privacy" target="_blank" style="color:var(--blue)">Firebase Privacy Policy</a></li>
+      <li><strong>Apple Push Notification service (Apple)</strong> — iOS companion app push notifications. <a href="https://www.apple.com/legal/privacy/" target="_blank" style="color:var(--blue)">Apple Privacy Policy</a></li>
+      <li><strong>Railway.app</strong> — Relay server and PostgreSQL hosting. <a href="https://railway.app/legal/privacy" target="_blank" style="color:var(--blue)">Railway Privacy Policy</a></li>
     </ul>
+    <p>These services do not collect user data for advertising or other purposes beyond notification delivery.</p>
+    <p>Open-source libraries: Jetpack Compose, Hilt, Room, OkHttp (Apache 2.0) / Flutter, Riverpod, Firebase Flutter SDK (BSD-3)</p>
   </div>
 
   <!-- 7 -->
@@ -217,7 +236,7 @@
   <!-- 8 -->
   <div class="section">
     <h2>8. Changes to This Policy</h2>
-    <p>This Privacy Policy may be updated as the App evolves — particularly when Phase 7 (smartphone integration) is introduced. Any changes will be reflected on this page with an updated date and announced via the GitHub repository.</p>
+    <p>This Privacy Policy may be updated as the App evolves. Any changes will be reflected on this page with an updated date and announced via the GitHub repository.</p>
   </div>
 
   <!-- 9 -->

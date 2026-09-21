@@ -38,7 +38,7 @@ class AlertListScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.wifi_off, color: Color(0xFF98989F), size: 48),
               const SizedBox(height: 12),
-              Text('연결 실패', style: TextStyle(color: Colors.white.withOpacity(.7))),
+              Text('연결 실패', style: TextStyle(color: Colors.white.withValues(alpha: .7))),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => ref.invalidate(alertsProvider),
@@ -88,7 +88,7 @@ class _AlertCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A2332),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: .06)),
       ),
       padding: const EdgeInsets.all(14),
       child: Row(
@@ -116,7 +116,7 @@ class _AlertCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: bgColor,
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: iconColor.withOpacity(.3)),
+                        border: Border.all(color: iconColor.withValues(alpha: .3)),
                       ),
                       child: Text(label, style: TextStyle(color: iconColor, fontSize: 11, fontWeight: FontWeight.w600)),
                     ),

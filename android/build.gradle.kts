@@ -8,19 +8,34 @@ plugins {
 
 android {
     namespace = "com.bydhealth.monitor"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bydhealth.monitor"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
+        buildConfigField(
+            "String",
+            "SERVER_BASE_URL",
+            "\"${providers.gradleProperty("BYD_SERVER_BASE_URL").orElse("https://byd-server-production.up.railway.app").get()}\""
+        )
+        buildConfigField(
+            "String",
+            "SERVER_API_KEY",
+            "\"${providers.gradleProperty("BYD_SERVER_API_KEY").orElse("").get()}\""
+        )
+        // CI에서 -PversionName=x.y.z -PversionCode=N 으로 주입
+        versionName = providers.gradleProperty("versionName").orElse(versionName ?: "1.0.0").get()
+        versionCode = providers.gradleProperty("versionCode").orElse("${versionCode ?: 1}").get().toInt()
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
+            // 개인 프로젝트 배포용 — debug keystore로 서명 (DiLink ADB 설치 가능)
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -42,6 +57,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -54,6 +70,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.activity)
 
     implementation(libs.hilt.android)
