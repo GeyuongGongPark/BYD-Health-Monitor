@@ -1,6 +1,7 @@
 package com.bydhealth.monitor.data.vehicle
 
 import android.hardware.bydauto.tyre.BYDAutoTyreDevice
+import android.util.Log
 import com.bydhealth.monitor.data.vehicle.mock.MockVehicleData
 import com.bydhealth.monitor.domain.model.TyreData
 import com.bydhealth.monitor.domain.model.TyreStatus
@@ -21,13 +22,18 @@ class TyreRepository @Inject constructor(
         while (true) {
             val device = apiLoader.tyreDevice
             val status = if (device != null) {
-                TyreStatus(
-                    leftFront = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_LEFT_FRONT),
-                    rightFront = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_RIGHT_FRONT),
-                    leftRear = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_LEFT_REAR),
-                    rightRear = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_RIGHT_REAR),
-                    systemState = device.getTyreSystemState(),
-                )
+                try {
+                    TyreStatus(
+                        leftFront = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_LEFT_FRONT),
+                        rightFront = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_RIGHT_FRONT),
+                        leftRear = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_LEFT_REAR),
+                        rightRear = device.readTyreData(BYDAutoTyreDevice.TYRE_COMMAND_AREA_RIGHT_REAR),
+                        systemState = device.getTyreSystemState(),
+                    )
+                } catch (e: SecurityException) {
+                    Log.w(TAG, "BYDAUTO_TYRE 권한 없음, Mock 데이터 사용: ${e.message}")
+                    MockVehicleData.tyreStatus
+                }
             } else {
                 MockVehicleData.tyreStatus
             }
@@ -46,6 +52,7 @@ class TyreRepository @Inject constructor(
     )
 
     companion object {
+        private const val TAG = "TyreRepository"
         private const val POLL_INTERVAL_MS = 3_000L
     }
 }

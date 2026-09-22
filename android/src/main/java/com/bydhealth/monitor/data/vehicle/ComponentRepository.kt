@@ -1,5 +1,6 @@
 package com.bydhealth.monitor.data.vehicle
 
+import android.util.Log
 import com.bydhealth.monitor.data.vehicle.mock.MockVehicleData
 import com.bydhealth.monitor.domain.model.ComponentStatus
 import kotlinx.coroutines.Dispatchers
@@ -25,11 +26,16 @@ class ComponentRepository @Inject constructor(
             val engine = apiLoader.engineDevice
             val gearbox = apiLoader.gearboxDevice
             val status = if (engine != null || gearbox != null) {
-                ComponentStatus(
-                    oilLevel = engine?.getOilLevel() ?: UNSUPPORTED,
-                    coolantLevel = engine?.getEngineCoolantLevel() ?: UNSUPPORTED,
-                    brakeFluidLevel = gearbox?.getBrakeFluidLevel() ?: UNSUPPORTED,
-                )
+                try {
+                    ComponentStatus(
+                        oilLevel = engine?.getOilLevel() ?: UNSUPPORTED,
+                        coolantLevel = engine?.getEngineCoolantLevel() ?: UNSUPPORTED,
+                        brakeFluidLevel = gearbox?.getBrakeFluidLevel() ?: UNSUPPORTED,
+                    )
+                } catch (e: SecurityException) {
+                    Log.w(TAG, "BYDAUTO_ENGINE/GEARBOX 권한 없음, Mock 데이터 사용: ${e.message}")
+                    MockVehicleData.componentStatus
+                }
             } else {
                 MockVehicleData.componentStatus
             }
@@ -39,6 +45,7 @@ class ComponentRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     companion object {
+        private const val TAG = "ComponentRepository"
         private const val POLL_INTERVAL_MS = 10_000L
         const val UNSUPPORTED = -1
     }

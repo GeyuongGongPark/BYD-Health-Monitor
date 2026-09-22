@@ -1,5 +1,6 @@
 package com.bydhealth.monitor.data.vehicle
 
+import android.util.Log
 import com.bydhealth.monitor.data.vehicle.mock.MockVehicleData
 import com.bydhealth.monitor.domain.model.VehicleHealth
 import kotlinx.coroutines.Dispatchers
@@ -19,17 +20,22 @@ class StatisticRepository @Inject constructor(
         while (true) {
             val device = apiLoader.statisticDevice
             val health = if (device != null) {
-                VehicleHealth(
-                    totalMileage = device.getTotalMileageValue(),
-                    elecPercentage = device.getElecPercentageValue(),
-                    elecDrivingRange = device.getElecDrivingRangeValue(),
-                    fuelPercentage = device.getFuelPercentageValue(),
-                    fuelDrivingRange = device.getFuelDrivingRangeValue(),
-                    waterTemperature = device.getWaterTemperature(),
-                    energyMode = 0, // TODO: EnergyDevice 별도 연동 시 채움
-                    instantElecCon = device.getInstantElecConValue(),
-                    instantFuelCon = device.getInstantFuelConValue(),
-                )
+                try {
+                    VehicleHealth(
+                        totalMileage = device.getTotalMileageValue(),
+                        elecPercentage = device.getElecPercentageValue(),
+                        elecDrivingRange = device.getElecDrivingRangeValue(),
+                        fuelPercentage = device.getFuelPercentageValue(),
+                        fuelDrivingRange = device.getFuelDrivingRangeValue(),
+                        waterTemperature = device.getWaterTemperature(),
+                        energyMode = 0, // TODO: EnergyDevice 별도 연동 시 채움
+                        instantElecCon = device.getInstantElecConValue(),
+                        instantFuelCon = device.getInstantFuelConValue(),
+                    )
+                } catch (e: SecurityException) {
+                    Log.w(TAG, "BYDAUTO_STATISTIC 권한 없음, Mock 데이터 사용: ${e.message}")
+                    MockVehicleData.vehicleHealth
+                }
             } else {
                 MockVehicleData.vehicleHealth
             }
@@ -39,6 +45,7 @@ class StatisticRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     companion object {
+        private const val TAG = "StatisticRepository"
         private const val POLL_INTERVAL_MS = 5_000L
     }
 }
